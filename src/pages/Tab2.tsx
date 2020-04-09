@@ -36,8 +36,8 @@ const Tab2: React.FC = () =>  {
 
  const trashicon = trash;
 
-  const serverurl = "http://157.245.63.46:8080";
-//  const serverurl = "http://157.245.63.46:1337";
+  // const serverurl = "http://157.245.63.46:8080";
+   const serverurl = "http://157.245.63.46:1337";
 
 
   const ipfs = ipfsClient('/ip4/157.245.63.46/tcp/5001')

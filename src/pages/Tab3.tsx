@@ -28,10 +28,23 @@ const Tab3: React.FC = () =>  {
   const [error, setError] = useState('');
 
    // const serverurl = "https://157.245.63.46:443/";
-    const serverurl = "http://157.245.63.46:8080";
-//   const serverurl = "http://157.245.63.46:1337";
+//    const serverurl = "http://157.245.63.46:8080";
+    const serverurl = "http://157.245.63.46:1337";
 
   const ipfs = ipfsClient('/ip4/157.245.63.46/tcp/5001')
+
+/*
+ipfsClient({
+  host: 'localhost',
+  port: 5001,
+  protocol: 'http',
+  headers: {
+    authorization: 'Bearer ' + TOKEN
+  }
+})
+
+*/
+
 
 
  // const [orbitdb, setOrbit] = useState();
@@ -198,6 +211,33 @@ const Tab3: React.FC = () =>  {
 
   const startnode = async () => {
   var url = serverurl + "/api/ipfsnode/startnode";
+   var cred = {
+	userid: userid
+   };
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },
+            body: JSON.stringify(cred)
+     })
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+         setNodemessage(JSON.stringify(res));
+        },      
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }
+      )
+  } 
+
+  const listusers = async () => {
+  var url = serverurl + "/api/ipfsadmin/listusers";
    var cred = {
 	userid: userid
    };
@@ -424,6 +464,22 @@ const saveToIpfsWithFilename = async (files) => {
             <IonButton onClick={stopnode}> stopnode </IonButton>
             <IonButton onClick={getconfig}> getconfig </IonButton>
             </IonItem>
+            <IonItem>
+            <IonButton onClick={listusers}> A-List users </IonButton>
+            <IonButton onClick={stopnode}> A-assigntype </IonButton>
+            <IonButton onClick={stopnode}> A-migrate </IonButton>
+            <IonButton onClick={stopnode}> A-validate-aftermigrate </IonButton>
+            <IonButton onClick={getconfig}> A-disable </IonButton>
+            <IonButton onClick={getconfig}> A-stop </IonButton>
+            </IonItem>
+            <IonItem>
+            <IonButton onClick={getconfig}> A-createp2p </IonButton>
+            <IonButton onClick={getconfig}> A-checkp2p </IonButton>
+            <IonButton onClick={getconfig}> A-listnodes </IonButton>
+            <IonButton onClick={getconfig}> A-checkpins </IonButton>
+            <IonButton onClick={getconfig}> A-assignfeatures </IonButton>
+            </IonItem>
+
             <IonItem>
                <IonLabel>
                {nodemessage}

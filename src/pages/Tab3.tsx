@@ -1,7 +1,7 @@
 
 //import { Plugins } from '@capacitor/core';
 import React, { useState }  from 'react';
-import {  useIonViewWillEnter, IonListHeader, IonRadioGroup,IonRadio, IonRow, IonCol, IonAlert, IonButton, IonList,IonInput, IonLabel,IonItem,  IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import {  IonGrid, IonCard, IonText, IonCardHeader,  useIonViewWillEnter, IonListHeader, IonRadioGroup,IonRadio, IonRow, IonCol, IonAlert, IonButton, IonList,IonInput, IonLabel,IonItem,  IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import ipfsClient from 'ipfs-http-client';
 
 
@@ -16,6 +16,11 @@ const Tab3: React.FC = () =>  {
   const [password, setPassword] = useState('');
   const [loginmessage, setLoginmessage] = useState('Place for login message');
   const [loginalert, setLoginalert] = useState('');
+  const [message, setMessage] = useState('');
+  const [messageAlert, showMessageAlert] = useState(false);
+  const [workinguser, setWorkinguser] = useState('');
+  const [mylistusers, setMylistusers] = React.useState([]);
+
   const [nodemessage, setNodemessage] = useState('Place for node message');
   const [statvalue, setStatvalue] = useState(0);
   const [listvalue, setListvalue] = useState(0);
@@ -253,7 +258,8 @@ ipfsClient({
       .then(
         (res) => {
          console.log(res);
-         setNodemessage(JSON.stringify(res));
+//         setNodemessage(JSON.stringify(res));
+         setMylistusers(res);
         },      
         (err) => {
          setError(err);
@@ -365,6 +371,35 @@ const saveToIpfsWithFilename = async (files) => {
   };
 
 */
+  const details = async () => {
+  
+  var url = serverurl + "/api/ipfsadmin/getdetails";
+   var cred = {
+	userid: userid,
+   };
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Authorization": "" + localStorage.getItem("token"),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(cred)
+     })
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+         var pp = JSON.stringify(res);
+         localStorage.setItem('details', pp);
+           
+        },      
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }
+      )
+  };
 
   const listfiles = async () => {
     var options = {};
@@ -384,6 +419,13 @@ const saveToIpfsWithFilename = async (files) => {
 
   };
 
+  const selectuser = async (user) => {
+        setWorkinguser(user);
+        console.log(workinguser);
+        setMessage("Selected "+ workinguser);
+        showMessageAlert(true);
+
+  };
 
   const liststat = async () => {
     var options = {};
@@ -540,6 +582,70 @@ const saveToIpfsWithFilename = async (files) => {
           buttons={['OK']}
         />
    
+
+   <IonAlert
+          isOpen={messageAlert}
+          onDidDismiss={() => showMessageAlert(false)}
+          header={''}
+          subHeader={'Message '}
+          message={message}
+          buttons={['OK']}
+        />
+
+
+   <IonCard >
+     <IonCardHeader>
+    Users 
+     </IonCardHeader>
+
+       {
+           mylistusers.map((a, index) =>      {
+         return (
+            <IonItem key={'somerandomghxx'+index}>
+      
+           <IonLabel class="ion-text-wrap">
+      <IonGrid>
+  <IonRow>
+    <IonCol>
+      <IonText color="danger">
+        <h3> {a['username']} </h3>
+      </IonText>
+    </IonCol>
+    <IonCol>
+    </IonCol>
+    <IonCol>
+     <IonButton size="small" shape="round" fill="outline"   onClick={()=>selectuser(a['userid'])}  >
+       {a['userid']}
+    </IonButton>
+    </IonCol>
+    <IonCol>
+    </IonCol>
+  </IonRow>
+      </IonGrid>
+
+    </IonLabel>
+            </IonItem>
+
+      ) 
+
+          })
+       }  
+
+   </IonCard >
+
+   <IonCard>
+            <IonItem>
+     <IonButton size="small" shape="round" fill="outline"   onClick={details} > Details       </IonButton>
+     <IonButton size="small" shape="round" fill="outline"   > Expand       </IonButton>
+     <IonButton size="small" shape="round" fill="outline"   > Disable       </IonButton>
+     <IonButton size="small" shape="round" fill="outline"   > Enable       </IonButton>
+     <IonButton size="small" shape="round" fill="outline"   > Delete       </IonButton>
+     <IonButton size="small" shape="round" fill="outline"   > Archive       </IonButton>
+     <IonButton size="small" shape="round" fill="outline"   > Restore       </IonButton>
+     
+            </IonItem>
+
+   </IonCard>
 
       </IonContent>
     </IonPage>

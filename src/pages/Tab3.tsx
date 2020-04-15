@@ -269,6 +269,33 @@ ipfsClient({
       )
   } 
 
+  const gettokenbalance = async () => {
+  var url = serverurl + "/api/tokenuser/gettokenbalance";
+   var cred = {
+	userid: userid
+   };
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },
+            body: JSON.stringify(cred)
+     })
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistusers(res);
+        },      
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }
+      )
+  } 
 /*
   const saveinserver = async ( x ) => {
 
@@ -508,6 +535,7 @@ const saveToIpfsWithFilename = async (files) => {
             </IonItem>
             <IonItem>
             <IonButton onClick={listusers}> A-List users </IonButton>
+            <IonButton onClick={gettokenbalance}> A-gettokenbalance </IonButton>
             <IonButton onClick={stopnode}> A-assigntype </IonButton>
             <IonButton onClick={stopnode}> A-migrate </IonButton>
             <IonButton onClick={stopnode}> A-validate-aftermigrate </IonButton>

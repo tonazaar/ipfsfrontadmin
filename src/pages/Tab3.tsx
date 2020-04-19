@@ -12,6 +12,7 @@ const Tab3: React.FC = () =>  {
   const [email, setEmail] = useState('');
   const [tokentoadd, setTokentoadd] = useState('');
   const [tokentosend, setTokentosend] = useState('');
+  const [touserid, setTouserid] = useState('');
   const [username, setUsername] = useState('');
   const [userid, setUserid] = useState('');
   const [nodetype, setNodetype] = useState('privatesharednode');
@@ -507,8 +508,8 @@ const saveToIpfsWithFilename = async (files) => {
    var url = serverurl + "/api/tokenuser/sendtoken";
    var cred = { 
         userid: userid,
-        tokentosend: tokentosend,
-        
+        touserid: touserid,
+        toamount: tokentosend,
    };  
   fetch(url, {
             method: 'POST',
@@ -718,6 +719,10 @@ const saveToIpfsWithFilename = async (files) => {
             </IonItem>
             <IonItem>
               <IonInput name="tokentosend" placeholder="Token to send" type="text" value={tokentoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setTokentosend(e.detail.value!)}>
+              </IonInput>
+            </IonItem>
+            <IonItem>
+              <IonInput name="touserid" placeholder="touserid to send" type="text" value={touserid} spellCheck={false} autocapitalize="off" onIonChange={e => setTouserid(e.detail.value!)}>
               </IonInput>
             </IonItem>
 

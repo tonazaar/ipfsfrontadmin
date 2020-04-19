@@ -10,6 +10,8 @@ import './Tab3.css';
 //const { Storage } = Plugins;
 const Tab3: React.FC = () =>  {
   const [email, setEmail] = useState('');
+  const [tokentoadd, setTokentoadd] = useState('');
+  const [tokentosend, setTokentosend] = useState('');
   const [username, setUsername] = useState('');
   const [userid, setUserid] = useState('');
   const [nodetype, setNodetype] = useState('privatesharednode');
@@ -454,6 +456,197 @@ const saveToIpfsWithFilename = async (files) => {
 
   };
 
+  const addtoken = async () => {
+     if(workinguser === '')
+     {
+        setMessage("Select user first ");
+        showMessageAlert(true);
+        return;
+     }
+
+
+   var url = serverurl + "/api/tokenuser/addtoken";
+   var cred = { 
+        userid: userid,
+        tokentoadd: tokentoadd,
+        
+   };  
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },  
+            body: JSON.stringify(cred)
+     })  
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistusers(res);
+        },    
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }   
+      )   
+
+  }
+
+  const sendtoken = async () => {
+     if(workinguser === '')
+     {
+        setMessage("Select user first ");
+        showMessageAlert(true);
+        return;
+     }
+
+
+   var url = serverurl + "/api/tokenuser/sendtoken";
+   var cred = { 
+        userid: userid,
+        tokentosend: tokentosend,
+        
+   };  
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },  
+            body: JSON.stringify(cred)
+     })  
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistusers(res);
+        },    
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }   
+      )   
+
+  }
+  const updateearnedtoken = async () => {
+     if(workinguser === '')
+     {
+        setMessage("Select user first ");
+        showMessageAlert(true);
+        return;
+     }
+
+
+   var url = serverurl + "/api/tokenuser/updateearnedtoken";
+   var cred = { 
+        userid: userid
+   };  
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },  
+            body: JSON.stringify(cred)
+     })  
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistusers(res);
+        },    
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }   
+      )   
+
+
+  }
+
+  const redeemtoken = async () => {
+     if(workinguser === '')
+     {
+        setMessage("Select user first ");
+        showMessageAlert(true);
+        return;
+     }
+
+
+   var url = serverurl + "/api/tokenuser/redeemtoken";
+   var cred = { 
+        userid: userid
+   };  
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },  
+            body: JSON.stringify(cred)
+     })  
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistusers(res);
+        },    
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }   
+      )   
+
+
+  }
+
+  const createuserwallet = async () => {
+     if(workinguser === '')
+     {
+        setMessage("Select user first ");
+        showMessageAlert(true);
+        return;
+     }
+
+
+   var url = serverurl + "/api/tokenuser/createuserwallet";
+   var cred = { 
+        userid: userid
+   };  
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },  
+            body: JSON.stringify(cred)
+     })  
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistusers(res);
+        },    
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }   
+      )   
+
+
+  }
+
   const liststat = async () => {
     var options = {};
     var source = await ipfs.files.stat('/user1/contents/', options)
@@ -519,6 +712,14 @@ const saveToIpfsWithFilename = async (files) => {
           </IonRow>
 
 
+            <IonItem>
+              <IonInput name="tokentoadd" placeholder="Token to add" type="text" value={tokentoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setTokentoadd(e.detail.value!)}>
+              </IonInput>
+            </IonItem>
+            <IonItem>
+              <IonInput name="tokentosend" placeholder="Token to send" type="text" value={tokentoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setTokentosend(e.detail.value!)}>
+              </IonInput>
+            </IonItem>
 
             <IonItem>
                <IonLabel>
@@ -534,8 +735,15 @@ const saveToIpfsWithFilename = async (files) => {
             <IonButton onClick={getconfig}> getconfig </IonButton>
             </IonItem>
             <IonItem>
-            <IonButton onClick={listusers}> A-List users </IonButton>
+            <IonButton onClick={createuserwallet}> A- Creatwallet </IonButton>
+            <IonButton onClick={updateearnedtoken}> A-Add Earning </IonButton>
+            <IonButton onClick={addtoken}> A-Add token </IonButton>
             <IonButton onClick={gettokenbalance}> A-gettokenbalance </IonButton>
+            <IonButton onClick={redeemtoken}> A-Redeem token </IonButton>
+            <IonButton onClick={sendtoken}> A-Send token </IonButton>
+            </IonItem>
+            <IonItem>
+            <IonButton onClick={listusers}> A-List users </IonButton>
             <IonButton onClick={stopnode}> A-assigntype </IonButton>
             <IonButton onClick={stopnode}> A-migrate </IonButton>
             <IonButton onClick={stopnode}> A-validate-aftermigrate </IonButton>

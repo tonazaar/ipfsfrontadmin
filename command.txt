@@ -1,0 +1,2 @@
+export PATH=.:~/android-sdk-linux/tools:/opt/gradle/bin:/usr/bin:$PATH 
+

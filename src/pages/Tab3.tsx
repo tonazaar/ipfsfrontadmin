@@ -11,8 +11,10 @@ import './Tab3.css';
 const Tab3: React.FC = () =>  {
   const [email, setEmail] = useState('');
   const [tokentoadd, setTokentoadd] = useState('');
+  const [tokentoredeem, setTokentoredeem] = useState('');
+  const [usagetoadd, setUsagetoadd] = useState('');
   const [tokentosend, setTokentosend] = useState('');
-  const [touserid, setTouserid] = useState('');
+//  const [touserid, setTouserid] = useState('');
   const [username, setUsername] = useState('');
   const [userid, setUserid] = useState('');
   const [nodetype, setNodetype] = useState('privatesharednode');
@@ -124,6 +126,9 @@ ipfsClient({
          localStorage.setItem('token', res.token);
          localStorage.setItem('userinfo', JSON.stringify(res.user));
          setLoginmessage(JSON.stringify(res));
+	 setUsername(res.user.username);
+	 setUserid(res.user.userid);
+	 setEmail(res.user.email);
         },      
         (err) => {
          setError(err);
@@ -465,11 +470,19 @@ const saveToIpfsWithFilename = async (files) => {
         return;
      }
 
+     if(tokentoadd === '')
+     {
+        setMessage("Enter token to add ");
+        showMessageAlert(true);
+        return;
+     }
 
-   var url = serverurl + "/api/tokenuser/addtoken";
+
+   var url = serverurl + "/api/tokenuser/tokentoadd";
    var cred = { 
         userid: userid,
-        tokentoadd: tokentoadd,
+        toamount: tokentoadd,
+        touserid: workinguser,
         
    };  
   fetch(url, {
@@ -504,11 +517,18 @@ const saveToIpfsWithFilename = async (files) => {
         return;
      }
 
+     if(tokentosend === '')
+     {
+        setMessage("Enter token to send ");
+        showMessageAlert(true);
+        return;
+     }
+
 
    var url = serverurl + "/api/tokenuser/sendtoken";
    var cred = { 
         userid: userid,
-        touserid: touserid,
+        touserid: workinguser,
         toamount: tokentosend,
    };  
   fetch(url, {
@@ -545,7 +565,9 @@ const saveToIpfsWithFilename = async (files) => {
 
    var url = serverurl + "/api/tokenuser/updateearnedtoken";
    var cred = { 
-        userid: userid
+        userid: userid,
+        touserid: workinguser,
+        usage: usagetoadd
    };  
   fetch(url, {
             method: 'POST',
@@ -583,7 +605,9 @@ const saveToIpfsWithFilename = async (files) => {
 
    var url = serverurl + "/api/tokenuser/redeemtoken";
    var cred = { 
-        userid: userid
+        fromuserid: workinguser,
+        touserid: userid,
+        toredeem: tokentoredeem
    };  
   fetch(url, {
             method: 'POST',
@@ -621,7 +645,7 @@ const saveToIpfsWithFilename = async (files) => {
 
    var url = serverurl + "/api/tokenuser/createuserwallet";
    var cred = { 
-        userid: userid
+        userid: workinguser
    };  
   fetch(url, {
             method: 'POST',
@@ -714,16 +738,22 @@ const saveToIpfsWithFilename = async (files) => {
 
 
             <IonItem>
+              <IonInput name="usagetoadd" placeholder="Usage to add" type="text" value={usagetoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setUsagetoadd(e.detail.value!)}>
+              </IonInput>
+            </IonItem>
+            <IonItem>
               <IonInput name="tokentoadd" placeholder="Token to add" type="text" value={tokentoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setTokentoadd(e.detail.value!)}>
               </IonInput>
             </IonItem>
             <IonItem>
-              <IonInput name="tokentosend" placeholder="Token to send" type="text" value={tokentoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setTokentosend(e.detail.value!)}>
+              <IonInput name="tokentoredeem" placeholder="Token to redeem" type="text" value={tokentoredeem} spellCheck={false} autocapitalize="off" onIonChange={e => setTokentoredeem(e.detail.value!)}>
               </IonInput>
             </IonItem>
             <IonItem>
-              <IonInput name="touserid" placeholder="touserid to send" type="text" value={touserid} spellCheck={false} autocapitalize="off" onIonChange={e => setTouserid(e.detail.value!)}>
+              <IonInput name="tokentosend" placeholder="Token to send" type="text" value={tokentosend} spellCheck={false} autocapitalize="off" onIonChange={e => setTokentosend(e.detail.value!)}>
               </IonInput>
+            </IonItem>
+            <IonItem>
             </IonItem>
 
             <IonItem>

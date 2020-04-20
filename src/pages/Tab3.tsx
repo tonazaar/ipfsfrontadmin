@@ -697,7 +697,7 @@ const saveToIpfsWithFilename = async (files) => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Admin panel </IonTitle>
+          <IonTitle>User admin panel </IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>

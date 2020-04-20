@@ -54,7 +54,11 @@ const App: React.FC = () => (
           </IonTabButton>
           <IonTabButton tab="tab3" href="/tab3">
             <IonIcon icon={square} />
-            <IonLabel>Admin </IonLabel>
+            <IonLabel>User admin </IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="tab1" href="/tab1">
+            <IonIcon icon={square} />
+            <IonLabel>Super admin </IonLabel>
           </IonTabButton>
         </IonTabBar>
       </IonTabs>

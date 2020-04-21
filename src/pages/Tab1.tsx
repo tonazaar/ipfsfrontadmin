@@ -674,6 +674,84 @@ const saveToIpfsWithFilename = async (files) => {
 
   }
 
+  const createuserconfig = async () => {
+     if(workinguser === '')
+     {
+        setMessage("Select user first ");
+        showMessageAlert(true);
+        return;
+     }
+
+
+   var url = serverurl + "/api/ipfsadmin/createuserconfig";
+   var cred = { 
+        userid: workinguser
+   };  
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },  
+            body: JSON.stringify(cred)
+     })  
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistusers(res);
+           getconfig();
+        },    
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }   
+      )   
+
+
+  }
+
+  const updateuserconfig = async () => {
+     if(workinguser === '')
+     {
+        setMessage("Select user first ");
+        showMessageAlert(true);
+        return;
+     }
+
+
+   var url = serverurl + "/api/ipfsadmin/updateuserconfig";
+   var cred = { 
+        userid: workinguser
+   };  
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },  
+            body: JSON.stringify(cred)
+     })  
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistusers(res);
+           getconfig();
+        },    
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }   
+      )   
+
+
+  }
+
 /*
   const liststat = async () => {
     var options = {};
@@ -793,6 +871,10 @@ const saveToIpfsWithFilename = async (files) => {
    </IonCard >
 
    <IonCard>
+            <IonItem>
+     <IonButton size="small" shape="round" fill="outline"   onClick={createuserconfig} > Create user config       </IonButton>
+     <IonButton size="small" shape="round" fill="outline"   onClick={updateuserconfig} > Update user config       </IonButton>
+            </IonItem>
             <IonItem>
      <IonButton size="small" shape="round" fill="outline"   onClick={details} > Details       </IonButton>
      <IonButton size="small" shape="round" fill="outline"   > Expand       </IonButton>

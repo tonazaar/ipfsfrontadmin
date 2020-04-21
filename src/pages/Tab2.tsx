@@ -19,6 +19,7 @@ const Tab2: React.FC = () =>  {
   const [dirtomake, setDirtomake] = useState('');
   const [filehash, setFilehash] = useState('');
   const [filename, setFilename] = useState('');
+  const [usagelimit, setUsagelimit] = useState(0);
   const [directory, setDirectory] = useState('/user1/contents/');
   const [statvalue, setStatvalue] = useState(0);
   const [mylist, setMylist] = React.useState([]);
@@ -102,9 +103,11 @@ const Tab2: React.FC = () =>  {
     setUserid(ipfsconfig.userid);
     setNodetype(ipfsconfig.nodetype);
     setLocalgateway(ipfsconfig.localgateway);
+    setUsagelimit(ipfsconfig.usagelimit);
     checkandcreatedir('/'+ ipfsconfig.userid);
 
     listNewDirectory('/'+ ipfsconfig.userid);
+    liststat('/'+ ipfsconfig.userid);
   });
 
   const getconfig = async () => {
@@ -142,6 +145,12 @@ const Tab2: React.FC = () =>  {
   };
 
   const captureFile = (event) => {
+    if(statvalue > usagelimit) {
+      setMessage('Reached usage limit: ' + usagelimit/1000 + 'KB');
+      setShowMessageAlert(true); 
+      return;
+     }
+
     event.stopPropagation()
     event.preventDefault()
 

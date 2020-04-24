@@ -13,6 +13,7 @@ const Tab1: React.FC = () =>  {
   const [tokentoadd, setTokentoadd] = useState('');
   const [tokentoredeem, setTokentoredeem] = useState('');
   const [usagetoadd, setUsagetoadd] = useState('');
+  const [newusagelimit, setNewusagelimit] = useState('');
   const [tokentosend, setTokentosend] = useState('');
 //  const [touserid, setTouserid] = useState('');
   const [username, setUsername] = useState('');
@@ -713,6 +714,158 @@ const saveToIpfsWithFilename = async (files) => {
 
   }
 
+  const enableuser = async () => {
+     if(workinguser === '')
+     {
+        setMessage("Select user first ");
+        showMessageAlert(true);
+        return;
+     }
+
+
+   var url = serverurl + "/api/ipfsadmin/enableuser";
+   var cred = { 
+        userid: workinguser
+   };  
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },  
+            body: JSON.stringify(cred)
+     })  
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistusers(res);
+           getconfig();
+        },    
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }   
+      )   
+}
+
+  const disableuser = async () => {
+     if(workinguser === '')
+     {
+        setMessage("Select user first ");
+        showMessageAlert(true);
+        return;
+     }
+
+
+   var url = serverurl + "/api/ipfsadmin/disableuser";
+   var cred = { 
+        userid: workinguser
+   };  
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },  
+            body: JSON.stringify(cred)
+     })  
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistusers(res);
+           getconfig();
+        },    
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }   
+      )   
+
+  }
+
+  const expandusagelimit = async () => {
+     if(workinguser === '')
+     {
+        setMessage("Select user first ");
+        showMessageAlert(true);
+        return;
+     }
+
+
+   var url = serverurl + "/api/ipfsadmin/disableuser";
+   var cred = { 
+        userid: workinguser,
+        newusagelimit: newusagelimit
+   };  
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },  
+            body: JSON.stringify(cred)
+     })  
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistusers(res);
+           getconfig();
+        },    
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }   
+      )   
+
+  }
+
+  const getuserconfig = async () => {
+     if(workinguser === '')
+     {
+        setMessage("Select user first ");
+        showMessageAlert(true);
+        return;
+     }
+
+
+   var url = serverurl + "/api/ipfsadmin/getuserconfig";
+   var cred = { 
+        userid: workinguser
+   };  
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },  
+            body: JSON.stringify(cred)
+     })  
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistusers(res);
+           getconfig();
+        },    
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }   
+      )   
+
+  }
+
   const updateuserconfig = async () => {
      if(workinguser === '')
      {
@@ -876,10 +1029,10 @@ const saveToIpfsWithFilename = async (files) => {
      <IonButton size="small" shape="round" fill="outline"   onClick={updateuserconfig} > Update user config       </IonButton>
             </IonItem>
             <IonItem>
-     <IonButton size="small" shape="round" fill="outline"   onClick={details} > Details       </IonButton>
-     <IonButton size="small" shape="round" fill="outline"   > Expand       </IonButton>
-     <IonButton size="small" shape="round" fill="outline"   > Disable       </IonButton>
-     <IonButton size="small" shape="round" fill="outline"   > Enable       </IonButton>
+     <IonButton size="small" shape="round" fill="outline"   onClick={getuserconfig}   > Details       </IonButton>
+     <IonButton size="small" shape="round" fill="outline"   onClick={expandusagelimit}  > Expand       </IonButton>
+     <IonButton size="small" shape="round" fill="outline"   onClick={disableuser}  > Disable       </IonButton>
+     <IonButton size="small" shape="round" fill="outline" onClick={enableuser}   > Enable       </IonButton>
      <IonButton size="small" shape="round" fill="outline"   > Delete       </IonButton>
      <IonButton size="small" shape="round" fill="outline"   > Archive       </IonButton>
      <IonButton size="small" shape="round" fill="outline"   > Restore       </IonButton>
@@ -898,6 +1051,10 @@ const saveToIpfsWithFilename = async (files) => {
 
             <IonCard>
 
+            <IonItem>
+              <IonInput name="newusagelimit" placeholder="Limit to add" type="text" value={newusagelimit} spellCheck={false} autocapitalize="off" onIonChange={e => setNewusagelimit(e.detail.value!)}>
+              </IonInput>
+            </IonItem>
             <IonItem>
               <IonInput name="usagetoadd" placeholder="Usage to add" type="text" value={usagetoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setUsagetoadd(e.detail.value!)}>
               </IonInput>

@@ -14,6 +14,7 @@ const Tab3: React.FC = () =>  {
   const [tokentoredeem, setTokentoredeem] = useState('');
   const [usagetoadd, setUsagetoadd] = useState('');
   const [tokentosend, setTokentosend] = useState('');
+  const [tokenbalance, setTokenbalance] = useState('');
 //  const [touserid, setTouserid] = useState('');
   const [username, setUsername] = useState('');
   const [userid, setUserid] = useState('');
@@ -296,6 +297,7 @@ ipfsClient({
          console.log(res);
 //         setNodemessage(JSON.stringify(res));
 //         setMylistusers(res);
+         setTokenbalance(res.slpbalance);
         },      
         (err) => {
          setError(err);
@@ -754,6 +756,7 @@ const saveToIpfsWithFilename = async (files) => {
               </IonInput>
             </IonItem>
             <IonItem>
+               Slp Token balance : {tokenbalance}
             </IonItem>
 
             <IonItem>

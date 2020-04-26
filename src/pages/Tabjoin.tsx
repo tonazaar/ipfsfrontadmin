@@ -1,35 +1,31 @@
 
 //import { Plugins } from '@capacitor/core';
 import React, { useState }  from 'react';
-import {  IonGrid, IonCard, IonText, IonCardHeader,  useIonViewWillEnter, IonRow, IonCol, IonAlert, IonButton, IonList,IonInput, IonLabel,IonItem,  IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-//import ipfsClient from 'ipfs-http-client';
+import {  IonGrid, IonCard, IonText, IonCardHeader,  useIonViewWillEnter, IonListHeader, IonRadioGroup,IonRadio, IonRow, IonCol, IonAlert, IonButton, IonList,IonInput, IonLabel,IonItem,  IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import ipfsClient from 'ipfs-http-client';
 
 
-import './Tab1.css';
+import './Tabjoin.css';
 
 //const { Storage } = Plugins;
-const Tab1: React.FC = () =>  {
+const Tabjoin: React.FC = () =>  {
   const [email, setEmail] = useState('');
-  const [tokentoadd, setTokentoadd] = useState('');
-  const [tokentoredeem, setTokentoredeem] = useState('');
-  const [usagetoadd, setUsagetoadd] = useState('');
-  const [newusagelimit, setNewusagelimit] = useState('');
-  const [tokentosend, setTokentosend] = useState('');
-//  const [touserid, setTouserid] = useState('');
+  const [nodeidtoadd, setNodeidtoadd] = useState('');
+  const [nodegrouptoadd, setNodegrouptoadd] = useState('');
   const [username, setUsername] = useState('');
   const [userid, setUserid] = useState('');
-//  const [nodetype, setNodetype] = useState('privatesharednode');
+  const [nodetype, setNodetype] = useState('privatesharednode');
   const [password, setPassword] = useState('');
   const [loginmessage, setLoginmessage] = useState('Place for login message');
   const [loginalert, setLoginalert] = useState('');
   const [message, setMessage] = useState('');
   const [messageAlert, showMessageAlert] = useState(false);
   const [workinguser, setWorkinguser] = useState('');
-  const [mylistusers, setMylistusers] = React.useState([]);
+  const [mylistnodes, setMylistnodes] = React.useState([]);
 
   const [nodemessage, setNodemessage] = useState('Place for node message');
-//  const [statvalue, setStatvalue] = useState(0);
-//  const [listvalue, setListvalue] = useState(0);
+  const [statvalue, setStatvalue] = useState(0);
+  const [listvalue, setListvalue] = useState(0);
   const [showLoginAlert, setShowLoginAlert] = useState(false);
 
 
@@ -42,7 +38,7 @@ const Tab1: React.FC = () =>  {
 //    const serverurl = "http://157.245.63.46:8080";
     const serverurl = "http://157.245.63.46:1337";
 
-//  const ipfs = ipfsClient('/ip4/157.245.63.46/tcp/5001')
+  const ipfs = ipfsClient('/ip4/157.245.63.46/tcp/5001')
 
 /*
 ipfsClient({
@@ -102,7 +98,6 @@ ipfsClient({
       return;
      }
 
-     listusers();
    });
 
 
@@ -251,8 +246,8 @@ ipfsClient({
       )
   } 
 
-  const listusers = async () => {
-  var url = serverurl + "/api/ipfsadmin/listusers";
+  const listpublicnodes = async () => {
+  var url = serverurl + "/api/nodeoperation/listpublicnodes";
    var cred = {
 	userid: userid
    };
@@ -269,7 +264,63 @@ ipfsClient({
         (res) => {
          console.log(res);
 //         setNodemessage(JSON.stringify(res));
-         setMylistusers(res);
+         setMylistnodes(res);
+        },      
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }
+      )
+  } 
+
+  const listprivatenodes = async () => {
+  var url = serverurl + "/api/nodeoperation/listprivatenodes";
+   var cred = {
+	userid: userid
+   };
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },
+            body: JSON.stringify(cred)
+     })
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+         setMylistnodes(res);
+        },      
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }
+      )
+  } 
+
+  const listclusternodes = async () => {
+  var url = serverurl + "/api/nodeoperation/listclusternodes";
+   var cred = {
+	userid: userid
+   };
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },
+            body: JSON.stringify(cred)
+     })
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+         setMylistnodes(res);
         },      
         (err) => {
          setError(err);
@@ -297,7 +348,7 @@ ipfsClient({
         (res) => {
          console.log(res);
 //         setNodemessage(JSON.stringify(res));
-//         setMylistusers(res);
+//         setMylistnodes(res);
         },      
         (err) => {
          setError(err);
@@ -345,7 +396,7 @@ ipfsClient({
   var url = serverurl + "/api/ipfsnode/getipfsconfig";
    var cred = {
 	userid: userid,
-	nodetype: "privatesharednode" // nodetype
+	nodetype: nodetype
    };
   fetch(url, {
             method: 'POST',
@@ -408,39 +459,7 @@ const saveToIpfsWithFilename = async (files) => {
   };
 
 */
-/*
-  const details = async () => {
-  
-  var url = serverurl + "/api/ipfsadmin/getdetails";
-   var cred = {
-	userid: userid,
-   };
-  fetch(url, {
-            method: 'POST',
-            headers: {
-                "Authorization": "" + localStorage.getItem("token"),
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(cred)
-     })
-      .then(res => res.json())
-      .then(
-        (res) => {
-         console.log(res);
-         var pp = JSON.stringify(res);
-         localStorage.setItem('details', pp);
-           
-        },      
-        (err) => {
-         setError(err);
-         setShowErrorAlert(true);
-          console.log(err)
-        }
-      )
-  };
 
-*/
-/*
   const listfiles = async () => {
     var options = {};
  var source = ipfs.files.ls('/user1/contents/', options)
@@ -458,7 +477,7 @@ const saveToIpfsWithFilename = async (files) => {
         setListvalue(arraylength);
 
   };
-*/
+
   const selectuser = async (user) => {
         setWorkinguser(user);
         console.log(workinguser);
@@ -467,27 +486,28 @@ const saveToIpfsWithFilename = async (files) => {
 
   };
 
-  const addtoken = async () => {
-     if(workinguser === '')
+  const joinnodecluster = async () => {
+
+     if(nodeidtoadd === '')
      {
-        setMessage("Select user first ");
+        setMessage("Enter nodeid to add ");
         showMessageAlert(true);
         return;
      }
 
-     if(tokentoadd === '')
+     if(nodegrouptoadd === '')
      {
-        setMessage("Enter token to add ");
+        setMessage("Enter nodegroup to add ");
         showMessageAlert(true);
         return;
      }
 
 
-   var url = serverurl + "/api/tokenuser/tokentoadd";
+   var url = serverurl + "/api/nodeoperation/joinnodecluster";
    var cred = { 
         userid: userid,
-        toamount: tokentoadd,
-        touserid: workinguser,
+        nodeid: nodeidtoadd,
+        nodegroup: nodegrouptoadd,
         
    };  
   fetch(url, {
@@ -503,7 +523,7 @@ const saveToIpfsWithFilename = async (files) => {
         (res) => {
          console.log(res);
 //         setNodemessage(JSON.stringify(res));
-//         setMylistusers(res);
+//         setMylistnodes(res);
         },    
         (err) => {
          setError(err);
@@ -514,27 +534,29 @@ const saveToIpfsWithFilename = async (files) => {
 
   }
 
-  const sendtoken = async () => {
-     if(workinguser === '')
+  const joinnodepublic = async () => {
+
+     if(nodeidtoadd === '')
      {
-        setMessage("Select user first ");
+        setMessage("Enter nodeid to add ");
         showMessageAlert(true);
         return;
      }
 
-     if(tokentosend === '')
+     if(nodegrouptoadd === '')
      {
-        setMessage("Enter token to send ");
+        setMessage("Enter nodegroup to add ");
         showMessageAlert(true);
         return;
      }
 
 
-   var url = serverurl + "/api/tokenuser/sendtoken";
+   var url = serverurl + "/api/nodeoperation/joinnodepubic";
    var cred = { 
         userid: userid,
-        touserid: workinguser,
-        toamount: tokentosend,
+        nodeid: nodeidtoadd,
+        nodegroup: nodegrouptoadd,
+        
    };  
   fetch(url, {
             method: 'POST',
@@ -549,7 +571,7 @@ const saveToIpfsWithFilename = async (files) => {
         (res) => {
          console.log(res);
 //         setNodemessage(JSON.stringify(res));
-//         setMylistusers(res);
+//         setMylistnodes(res);
         },    
         (err) => {
          setError(err);
@@ -559,20 +581,30 @@ const saveToIpfsWithFilename = async (files) => {
       )   
 
   }
-  const updateearnedtoken = async () => {
-     if(workinguser === '')
+
+  const joinnodeprivate = async () => {
+
+     if(nodeidtoadd === '')
      {
-        setMessage("Select user first ");
+        setMessage("Enter nodeid to add ");
+        showMessageAlert(true);
+        return;
+     }
+
+     if(nodegrouptoadd === '')
+     {
+        setMessage("Enter nodegroup to add ");
         showMessageAlert(true);
         return;
      }
 
 
-   var url = serverurl + "/api/tokenuser/updateearnedtoken";
+   var url = serverurl + "/api/nodeoperation/joinnodeprivate";
    var cred = { 
         userid: userid,
-        touserid: workinguser,
-        usage: usagetoadd
+        nodeid: nodeidtoadd,
+        nodegroup: nodegrouptoadd,
+        
    };  
   fetch(url, {
             method: 'POST',
@@ -587,200 +619,7 @@ const saveToIpfsWithFilename = async (files) => {
         (res) => {
          console.log(res);
 //         setNodemessage(JSON.stringify(res));
-//         setMylistusers(res);
-        },    
-        (err) => {
-         setError(err);
-         setShowErrorAlert(true);
-          console.log(err)
-        }   
-      )   
-
-
-  }
-
-  const redeemtoken = async () => {
-     if(workinguser === '')
-     {
-        setMessage("Select user first ");
-        showMessageAlert(true);
-        return;
-     }
-
-
-   var url = serverurl + "/api/tokenuser/redeemtoken";
-   var cred = { 
-        fromuserid: workinguser,
-        touserid: userid,
-        toredeem: tokentoredeem
-   };  
-  fetch(url, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "" + localStorage.getItem("token"),
-            },  
-            body: JSON.stringify(cred)
-     })  
-      .then(res => res.json())
-      .then(
-        (res) => {
-         console.log(res);
-//         setNodemessage(JSON.stringify(res));
-//         setMylistusers(res);
-        },    
-        (err) => {
-         setError(err);
-         setShowErrorAlert(true);
-          console.log(err)
-        }   
-      )   
-
-
-  }
-
-  const createuserwallet = async () => {
-     if(workinguser === '')
-     {
-        setMessage("Select user first ");
-        showMessageAlert(true);
-        return;
-     }
-
-
-   var url = serverurl + "/api/tokenuser/createuserwallet";
-   var cred = { 
-        userid: workinguser
-   };  
-  fetch(url, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "" + localStorage.getItem("token"),
-            },  
-            body: JSON.stringify(cred)
-     })  
-      .then(res => res.json())
-      .then(
-        (res) => {
-         console.log(res);
-//         setNodemessage(JSON.stringify(res));
-//         setMylistusers(res);
-        },    
-        (err) => {
-         setError(err);
-         setShowErrorAlert(true);
-          console.log(err)
-        }   
-      )   
-
-
-  }
-
-  const createuserconfig = async () => {
-     if(workinguser === '')
-     {
-        setMessage("Select user first ");
-        showMessageAlert(true);
-        return;
-     }
-
-
-   var url = serverurl + "/api/ipfsadmin/createuserconfig";
-   var cred = { 
-        userid: workinguser
-   };  
-  fetch(url, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "" + localStorage.getItem("token"),
-            },  
-            body: JSON.stringify(cred)
-     })  
-      .then(res => res.json())
-      .then(
-        (res) => {
-         console.log(res);
-//         setNodemessage(JSON.stringify(res));
-//         setMylistusers(res);
-           getconfig();
-        },    
-        (err) => {
-         setError(err);
-         setShowErrorAlert(true);
-          console.log(err)
-        }   
-      )   
-
-
-  }
-
-  const enableuser = async () => {
-     if(workinguser === '')
-     {
-        setMessage("Select user first ");
-        showMessageAlert(true);
-        return;
-     }
-
-
-   var url = serverurl + "/api/ipfsadmin/enableuser";
-   var cred = { 
-        userid: workinguser
-   };  
-  fetch(url, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "" + localStorage.getItem("token"),
-            },  
-            body: JSON.stringify(cred)
-     })  
-      .then(res => res.json())
-      .then(
-        (res) => {
-         console.log(res);
-//         setNodemessage(JSON.stringify(res));
-//         setMylistusers(res);
-           getconfig();
-        },    
-        (err) => {
-         setError(err);
-         setShowErrorAlert(true);
-          console.log(err)
-        }   
-      )   
-}
-
-  const disableuser = async () => {
-     if(workinguser === '')
-     {
-        setMessage("Select user first ");
-        showMessageAlert(true);
-        return;
-     }
-
-
-   var url = serverurl + "/api/ipfsadmin/disableuser";
-   var cred = { 
-        userid: workinguser
-   };  
-  fetch(url, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "" + localStorage.getItem("token"),
-            },  
-            body: JSON.stringify(cred)
-     })  
-      .then(res => res.json())
-      .then(
-        (res) => {
-         console.log(res);
-//         setNodemessage(JSON.stringify(res));
-//         setMylistusers(res);
-           getconfig();
+//         setMylistnodes(res);
         },    
         (err) => {
          setError(err);
@@ -791,123 +630,6 @@ const saveToIpfsWithFilename = async (files) => {
 
   }
 
-  const expandusagelimit = async () => {
-     if(workinguser === '')
-     {
-        setMessage("Select user first ");
-        showMessageAlert(true);
-        return;
-     }
-
-
-   var url = serverurl + "/api/ipfsadmin/disableuser";
-   var cred = { 
-        userid: workinguser,
-        newusagelimit: newusagelimit
-   };  
-  fetch(url, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "" + localStorage.getItem("token"),
-            },  
-            body: JSON.stringify(cred)
-     })  
-      .then(res => res.json())
-      .then(
-        (res) => {
-         console.log(res);
-//         setNodemessage(JSON.stringify(res));
-//         setMylistusers(res);
-           getconfig();
-        },    
-        (err) => {
-         setError(err);
-         setShowErrorAlert(true);
-          console.log(err)
-        }   
-      )   
-
-  }
-
-  const getuserconfig = async () => {
-     if(workinguser === '')
-     {
-        setMessage("Select user first ");
-        showMessageAlert(true);
-        return;
-     }
-
-
-   var url = serverurl + "/api/ipfsadmin/getuserconfig";
-   var cred = { 
-        userid: workinguser
-   };  
-  fetch(url, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "" + localStorage.getItem("token"),
-            },  
-            body: JSON.stringify(cred)
-     })  
-      .then(res => res.json())
-      .then(
-        (res) => {
-         console.log(res);
-//         setNodemessage(JSON.stringify(res));
-//         setMylistusers(res);
-           getconfig();
-        },    
-        (err) => {
-         setError(err);
-         setShowErrorAlert(true);
-          console.log(err)
-        }   
-      )   
-
-  }
-
-  const updateuserconfig = async () => {
-     if(workinguser === '')
-     {
-        setMessage("Select user first ");
-        showMessageAlert(true);
-        return;
-     }
-
-
-   var url = serverurl + "/api/ipfsadmin/updateuserconfig";
-   var cred = { 
-        userid: workinguser
-   };  
-  fetch(url, {
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "" + localStorage.getItem("token"),
-            },  
-            body: JSON.stringify(cred)
-     })  
-      .then(res => res.json())
-      .then(
-        (res) => {
-         console.log(res);
-//         setNodemessage(JSON.stringify(res));
-//         setMylistusers(res);
-           getconfig();
-        },    
-        (err) => {
-         setError(err);
-         setShowErrorAlert(true);
-          console.log(err)
-        }   
-      )   
-
-
-  }
-
-/*
   const liststat = async () => {
     var options = {};
     var source = await ipfs.files.stat('/user1/contents/', options)
@@ -915,7 +637,6 @@ const saveToIpfsWithFilename = async (files) => {
         setStatvalue(source.cumulativeSize);
 
   };
-*/
 
 /*
  const isJson = (str) => {
@@ -934,7 +655,7 @@ const saveToIpfsWithFilename = async (files) => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Super admin panel </IonTitle>
+          <IonTitle>Node join panel </IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
@@ -964,12 +685,6 @@ const saveToIpfsWithFilename = async (files) => {
               <IonInput name="password" type="password" value={password} onIonChange={e => setPassword(e.detail.value!)}>
               </IonInput>
             </IonItem>
-<IonItem>
-               <IonLabel>
-               {loginmessage}
-               </IonLabel>
-            </IonItem>
-
    <IonRow>
             <IonCol>
               <IonButton expand="block" onClick={mylogin}> Login </IonButton>
@@ -980,18 +695,128 @@ const saveToIpfsWithFilename = async (files) => {
           </IonRow>
 
 
+            <IonItem>
+              <IonInput name="nodeidtoadd" placeholder="Node id to add" type="text" value={nodeidtoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setNodeidtoadd(e.detail.value!)}>
+              </IonInput>
+            </IonItem>
+            <IonItem>
+              <IonInput name="nodegrouptoadd" placeholder="nodegrouptoadd to add" type="text" value={nodegrouptoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setNodegrouptoadd(e.detail.value!)}>
+              </IonInput>
+            </IonItem>
+
+            <IonItem>
+            <IonButton size="small" shape="round" fill="outline" onClick={listprivatenodes}> List private nodes </IonButton>
+            <IonButton size="small" shape="round" fill="outline" onClick={listpublicnodes}> List public nodes </IonButton>
+            <IonButton size="small" shape="round" fill="outline" onClick={listclusternodes}> List public cluster nodes </IonButton>
+            </IonItem>
+            <IonItem>
+               <IonLabel>
+               {loginmessage}
+               </IonLabel>
+            </IonItem>
+            <IonItem>
+            <IonButton onClick={logintest}> Test Login </IonButton>
+            </IonItem>
+            <IonItem>
+            <IonButton onClick={startnode}> startnode </IonButton>
+            <IonButton onClick={stopnode}> stopnode </IonButton>
+            <IonButton onClick={getconfig}> getconfig </IonButton>
+            </IonItem>
+            <IonItem>
+            </IonItem>
+            <IonItem>
+            <IonButton onClick={stopnode}> A-assigntype </IonButton>
+            <IonButton onClick={stopnode}> A-migrate </IonButton>
+            <IonButton onClick={stopnode}> A-validate-aftermigrate </IonButton>
+            <IonButton onClick={getconfig}> A-disable </IonButton>
+            <IonButton onClick={getconfig}> A-stop </IonButton>
+            </IonItem>
+            <IonItem>
+            <IonButton onClick={getconfig}> A-createp2p </IonButton>
+            <IonButton onClick={getconfig}> A-checkp2p </IonButton>
+            <IonButton onClick={getconfig}> A-listnodes </IonButton>
+            <IonButton onClick={getconfig}> A-checkpins </IonButton>
+            <IonButton onClick={getconfig}> A-assignfeatures </IonButton>
+            </IonItem>
+
+            <IonItem>
+               <IonLabel>
+               {nodemessage}
+               </IonLabel>
+            </IonItem>
+
+            <IonItem >
+            <IonButton onClick={listfiles}> Number of files </IonButton>
+            <IonLabel slot="end" >  {listvalue} </IonLabel>
+            </IonItem>
+            <IonItem >
+            <IonButton onClick={liststat}> Size usage (bytes) </IonButton>
+            <IonLabel slot="end" >  {statvalue} </IonLabel>
+            </IonItem>
+
+           <IonRadioGroup value={nodetype}   onIonChange={e => setNodetype(e.detail.value!)} >
+        <IonListHeader>
+          <IonLabel>Usage type</IonLabel>
+        </IonListHeader>
+
+        <IonItem>
+          <IonLabel>Private node </IonLabel>
+          <IonRadio slot="start" value="privatenode" />
+        </IonItem>
+
+        <IonItem>
+          <IonLabel>Private shared node </IonLabel>
+          <IonRadio slot="start" value="privatesharednode" />
+        </IonItem>
+
+        <IonItem>
+          <IonLabel>Public shared node</IonLabel>
+          <IonRadio slot="start" value="publicsharednode" />
+        </IonItem>
+
+        <IonItem>
+          <IonLabel>Cluster node</IonLabel>
+          <IonRadio slot="start" value="clusternode" />
+        </IonItem>
+       </IonRadioGroup>
+
+    </IonList>
+    <IonAlert
+          isOpen={showErrorAlert}
+          onDidDismiss={() => setShowErrorAlert(false)}
+          header={'Alert'}
+          subHeader={'Error'}
+          message={error}
+          buttons={['OK']}
+        />
+
+     <IonAlert
+          isOpen={showLoginAlert}
+          onDidDismiss={() => setShowLoginAlert(false)}
+          header={'Instruction'}
+          subHeader={'Login '}
+          message={loginalert}
+          buttons={['OK']}
+        />
+   
+
+   <IonAlert
+          isOpen={messageAlert}
+          onDidDismiss={() => showMessageAlert(false)}
+          header={''}
+          subHeader={'Message '}
+          message={message}
+          buttons={['OK']}
+        />
+
+
    <IonCard >
      <IonCardHeader>
-           <IonLabel>
     Users 
-           </IonLabel>
-           <IonLabel >
-            <IonButton  size="small" shape="round" fill="outline" onClick={listusers}> A-List users </IonButton>
-           </IonLabel>
      </IonCardHeader>
 
        {
-           mylistusers.map((a, index) =>      {
+           mylistnodes.map((a, index) =>      {
          return (
             <IonItem key={'somerandomghxx'+index}>
       
@@ -1027,120 +852,20 @@ const saveToIpfsWithFilename = async (files) => {
 
    <IonCard>
             <IonItem>
-     <IonButton size="small" shape="round" fill="outline"   onClick={createuserconfig} > Create user config       </IonButton>
-     <IonButton size="small" shape="round" fill="outline"   onClick={updateuserconfig} > Update user config       </IonButton>
-            </IonItem>
-            <IonItem>
-     <IonButton size="small" shape="round" fill="outline"   onClick={getuserconfig}   > Details       </IonButton>
-     <IonButton size="small" shape="round" fill="outline"   onClick={expandusagelimit}  > Expand       </IonButton>
-     <IonButton size="small" shape="round" fill="outline"   onClick={disableuser}  > Disable       </IonButton>
-     <IonButton size="small" shape="round" fill="outline" onClick={enableuser}   > Enable       </IonButton>
+     <IonButton size="small" shape="round" fill="outline"   > Expand       </IonButton>
+     <IonButton size="small" shape="round" fill="outline"   > Disable       </IonButton>
+     <IonButton size="small" shape="round" fill="outline"   > Enable       </IonButton>
      <IonButton size="small" shape="round" fill="outline"   > Delete       </IonButton>
      <IonButton size="small" shape="round" fill="outline"   > Archive       </IonButton>
      <IonButton size="small" shape="round" fill="outline"   > Restore       </IonButton>
      
-     </IonItem>
-     <IonItem>
-       <IonButton size="small" shape="round" fill="outline" onClick={createuserwallet}> A- Creatwallet </IonButton>
-       <IonButton size="small" shape="round" fill="outline" onClick={updateearnedtoken}> A-Add Earning </IonButton>
-       <IonButton size="small" shape="round" fill="outline" onClick={addtoken}> A-Add token </IonButton>
-       <IonButton size="small" shape="round" fill="outline" onClick={gettokenbalance}> A-gettokenbalance </IonButton>
-       <IonButton size="small" shape="round" fill="outline" onClick={redeemtoken}> A-Redeem token </IonButton>
-       <IonButton size="small" shape="round" fill="outline" onClick={sendtoken}> A-Send token </IonButton>
-       </IonItem>
+            </IonItem>
 
    </IonCard>
-
-            <IonCard>
-
-            <IonItem>
-              <IonInput name="newusagelimit" placeholder="Limit to add" type="text" value={newusagelimit} spellCheck={false} autocapitalize="off" onIonChange={e => setNewusagelimit(e.detail.value!)}>
-              </IonInput>
-            </IonItem>
-            <IonItem>
-              <IonInput name="usagetoadd" placeholder="Usage to add" type="text" value={usagetoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setUsagetoadd(e.detail.value!)}>
-              </IonInput>
-            </IonItem>
-            <IonItem>
-              <IonInput name="tokentoadd" placeholder="Token to add" type="text" value={tokentoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setTokentoadd(e.detail.value!)}>
-              </IonInput>
-            </IonItem>
-            <IonItem>
-              <IonInput name="tokentoredeem" placeholder="Token to redeem" type="text" value={tokentoredeem} spellCheck={false} autocapitalize="off" onIonChange={e => setTokentoredeem(e.detail.value!)}>
-              </IonInput>
-            </IonItem>
-            <IonItem>
-              <IonInput name="tokentosend" placeholder="Token to send" type="text" value={tokentosend} spellCheck={false} autocapitalize="off" onIonChange={e => setTokentosend(e.detail.value!)}>
-              </IonInput>
-            </IonItem>
-            </IonCard>
-
-            <IonCard>
-            <IonItem>
-            <IonButton onClick={logintest}> Test Login </IonButton>
-            <IonButton onClick={startnode}> startnode </IonButton>
-            <IonButton onClick={stopnode}> stopnode </IonButton>
-            <IonButton onClick={getconfig}> getconfig </IonButton>
-            </IonItem>
-            <IonItem>
-            <IonButton onClick={stopnode}> A-assigntype </IonButton>
-            <IonButton onClick={stopnode}> A-migrate </IonButton>
-            <IonButton onClick={stopnode}> A-validate-aftermigrate </IonButton>
-            <IonButton onClick={getconfig}> A-disable </IonButton>
-            <IonButton onClick={getconfig}> A-stop </IonButton>
-            </IonItem>
-            <IonItem>
-            <IonButton onClick={getconfig}> A-createp2p </IonButton>
-            <IonButton onClick={getconfig}> A-checkp2p </IonButton>
-            <IonButton onClick={getconfig}> A-listnodes </IonButton>
-            <IonButton onClick={getconfig}> A-checkpins </IonButton>
-            <IonButton onClick={getconfig}> A-assignfeatures </IonButton>
-            </IonItem>
-
-            <IonItem>
-               <IonLabel>
-               {nodemessage}
-               </IonLabel>
-            </IonItem>
-            </IonCard>
-
-
-
-
-    </IonList>
-    <IonAlert
-          isOpen={showErrorAlert}
-          onDidDismiss={() => setShowErrorAlert(false)}
-          header={'Alert'}
-          subHeader={'Error'}
-          message={error}
-          buttons={['OK']}
-        />
-
-     <IonAlert
-          isOpen={showLoginAlert}
-          onDidDismiss={() => setShowLoginAlert(false)}
-          header={'Instruction'}
-          subHeader={'Login '}
-          message={loginalert}
-          buttons={['OK']}
-        />
-   
-
-   <IonAlert
-          isOpen={messageAlert}
-          onDidDismiss={() => showMessageAlert(false)}
-          header={''}
-          subHeader={'Message '}
-          message={message}
-          buttons={['OK']}
-        />
-
-
 
       </IonContent>
     </IonPage>
   );
 };
 
-export default Tab1;
+export default Tabjoin;

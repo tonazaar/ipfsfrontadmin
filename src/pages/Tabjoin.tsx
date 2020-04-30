@@ -7,6 +7,9 @@ import ipfsClient from 'ipfs-http-client';
 
 import './Tabjoin.css';
 
+import configdata from './config.json';
+
+
 //const { Storage } = Plugins;
 const Tabjoin: React.FC = () =>  {
   const [email, setEmail] = useState('');
@@ -20,7 +23,7 @@ const Tabjoin: React.FC = () =>  {
   const [loginalert, setLoginalert] = useState('');
   const [message, setMessage] = useState('');
   const [messageAlert, showMessageAlert] = useState(false);
-  const [workinguser, setWorkinguser] = useState('');
+  const [workingnode, setWorkingnode] = useState('');
   const [mylistnodes, setMylistnodes] = React.useState([]);
 
   const [nodemessage, setNodemessage] = useState('Place for node message');
@@ -36,9 +39,11 @@ const Tabjoin: React.FC = () =>  {
 
    // const serverurl = "https://157.245.63.46:443/";
 //    const serverurl = "http://157.245.63.46:8080";
-    const serverurl = "http://157.245.63.46:1337";
+const serverurl = configdata.sailsurl;
 
-  const ipfs = ipfsClient('/ip4/157.245.63.46/tcp/5001')
+  const ipfs = ipfsClient(configdata.apilink) ;
+
+
 
 /*
 ipfsClient({
@@ -87,7 +92,9 @@ ipfsClient({
 
     logintest();
 
-    getconfig();
+    if(userid !== '' ) {
+      getconfig();
+    }
 
     var tmpipfs = localStorage.getItem("ipfsconfig");
 
@@ -249,7 +256,8 @@ ipfsClient({
   const listpublicnodes = async () => {
   var url = serverurl + "/api/nodeoperation/listpublicnodes";
    var cred = {
-	userid: userid
+        userid: userid,
+        nodetype: 'publicnode',
    };
   fetch(url, {
             method: 'POST',
@@ -329,7 +337,7 @@ ipfsClient({
         }
       )
   } 
-
+/*
   const gettokenbalance = async () => {
   var url = serverurl + "/api/tokenuser/gettokenbalance";
    var cred = {
@@ -357,6 +365,7 @@ ipfsClient({
         }
       )
   } 
+*/
 /*
   const saveinserver = async ( x ) => {
 
@@ -394,6 +403,12 @@ ipfsClient({
 */
   const getconfig = async () => {
   var url = serverurl + "/api/ipfsnode/getipfsconfig";
+   if(userid === '') {
+         setError("Userid not set");
+         setShowErrorAlert(true);
+     return;
+  }
+
    var cred = {
 	userid: userid,
 	nodetype: nodetype
@@ -478,10 +493,10 @@ const saveToIpfsWithFilename = async (files) => {
 
   };
 
-  const selectuser = async (user) => {
-        setWorkinguser(user);
-        console.log(workinguser);
-        setMessage("Selected "+ workinguser);
+  const selectnode = async (node) => {
+        setWorkingnode(node);
+        console.log(workingnode);
+        setMessage("Selected "+ workingnode);
         showMessageAlert(true);
 
   };
@@ -507,6 +522,7 @@ const saveToIpfsWithFilename = async (files) => {
    var cred = { 
         userid: userid,
         nodeid: nodeidtoadd,
+        nodetype: 'clusternode',
         nodegroup: nodegrouptoadd,
         
    };  
@@ -551,11 +567,105 @@ const saveToIpfsWithFilename = async (files) => {
      }
 
 
-   var url = serverurl + "/api/nodeoperation/joinnodepubic";
+   var url = serverurl + "/api/nodeoperation/joinnodepublic";
    var cred = { 
         userid: userid,
         nodeid: nodeidtoadd,
+        nodetype: 'publicnode',
         nodegroup: nodegrouptoadd,
+        
+   };  
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },  
+            body: JSON.stringify(cred)
+     })  
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistnodes(res);
+        },    
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }   
+      )   
+
+  }
+  const deletenode = async () => {
+
+     if(workingnode === '')
+     {
+        setMessage("Select node to assign");
+        showMessageAlert(true);
+        return;
+     }
+
+     if(userid === '')
+     {
+        setMessage("Userid not selected    ");
+        showMessageAlert(true);
+        return;
+     }
+
+
+   var url = serverurl + "/api/nodeoperation/deletenodeid";
+   var cred = { 
+        userid: userid,
+        nodeid: workingnode,
+        
+   };  
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },  
+            body: JSON.stringify(cred)
+     })  
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+//         setMylistnodes(res);
+        },    
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }   
+      )   
+
+  }
+
+  const assignnodetouser = async () => {
+
+     if(workingnode === '')
+     {
+        setMessage("Select node to assign");
+        showMessageAlert(true);
+        return;
+     }
+
+     if(userid === '')
+     {
+        setMessage("Userid not selected    ");
+        showMessageAlert(true);
+        return;
+     }
+
+
+   var url = serverurl + "/api/ipfsadmin/assignnodetouser";
+   var cred = { 
+        userid: userid,
+        nodeid: workingnode,
         
    };  
   fetch(url, {
@@ -603,6 +713,7 @@ const saveToIpfsWithFilename = async (files) => {
    var cred = { 
         userid: userid,
         nodeid: nodeidtoadd,
+        nodetype: 'privatenode',
         nodegroup: nodegrouptoadd,
         
    };  
@@ -703,11 +814,20 @@ const saveToIpfsWithFilename = async (files) => {
               <IonInput name="nodegrouptoadd" placeholder="nodegrouptoadd to add" type="text" value={nodegrouptoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setNodegrouptoadd(e.detail.value!)}>
               </IonInput>
             </IonItem>
+            <IonItem>
+            <IonButton size="small" shape="round" fill="outline" onClick={joinnodecluster}> Join node cluster </IonButton>
+            <IonButton size="small" shape="round" fill="outline" onClick={joinnodepublic}> Join node public </IonButton>
+            <IonButton size="small" shape="round" fill="outline" onClick={joinnodeprivate}> Join node private </IonButton>
+            </IonItem>
 
             <IonItem>
             <IonButton size="small" shape="round" fill="outline" onClick={listprivatenodes}> List private nodes </IonButton>
             <IonButton size="small" shape="round" fill="outline" onClick={listpublicnodes}> List public nodes </IonButton>
             <IonButton size="small" shape="round" fill="outline" onClick={listclusternodes}> List public cluster nodes </IonButton>
+            </IonItem>
+            <IonItem>
+            <IonButton size="small" shape="round" fill="outline" onClick={assignnodetouser}> Assign node to user </IonButton>
+            <IonButton size="small" shape="round" fill="outline" onClick={deletenode}> Delete node  </IonButton>
             </IonItem>
             <IonItem>
                <IonLabel>
@@ -825,14 +945,15 @@ const saveToIpfsWithFilename = async (files) => {
   <IonRow>
     <IonCol>
       <IonText color="danger">
-        <h3> {a['username']} </h3>
+        <h3> {a['nodegroup']} </h3>
+        <h4> {a['nodename']} </h4>
       </IonText>
     </IonCol>
     <IonCol>
     </IonCol>
     <IonCol>
-     <IonButton size="small" shape="round" fill="outline"   onClick={()=>selectuser(a['userid'])}  >
-       {a['userid']}
+     <IonButton size="small" shape="round" fill="outline"   onClick={()=>selectnode(a['nodeid'])}  >
+       {a['nodeid']}
     </IonButton>
     </IonCol>
     <IonCol>

@@ -6,6 +6,7 @@ import {  IonGrid, IonCard, IonText, IonCardHeader,  useIonViewWillEnter, IonRow
 
 
 import './Tab1.css';
+import configdata from './config.json';
 
 //const { Storage } = Plugins;
 const Tab1: React.FC = () =>  {
@@ -40,9 +41,10 @@ const Tab1: React.FC = () =>  {
 
    // const serverurl = "https://157.245.63.46:443/";
 //    const serverurl = "http://157.245.63.46:8080";
-    const serverurl = "http://157.245.63.46:1337";
+ const serverurl = configdata.sailsurl; //"http://54.169.57.146:1337";
 
-//  const ipfs = ipfsClient('/ip4/157.245.63.46/tcp/5001')
+//  const ipfs = ipfsClient('/ip4/172.31.5.90/tcp/5001')
+
 
 /*
 ipfsClient({
@@ -91,7 +93,9 @@ ipfsClient({
 
     logintest();
 
-    getconfig();
+    if(userid !== ''){
+       getconfig();
+    }
 
     var tmpipfs = localStorage.getItem("ipfsconfig");
 
@@ -343,6 +347,13 @@ ipfsClient({
 */
   const getconfig = async () => {
   var url = serverurl + "/api/ipfsnode/getipfsconfig";
+
+  if(userid === '') {
+         setError("Userid not set");
+         setShowErrorAlert(true);
+     return;
+  }
+
    var cred = {
 	userid: userid,
 	nodetype: "privatesharednode" // nodetype

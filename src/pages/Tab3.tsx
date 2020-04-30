@@ -7,6 +7,9 @@ import ipfsClient from 'ipfs-http-client';
 
 import './Tab3.css';
 
+import configdata from './config.json';
+
+
 //const { Storage } = Plugins;
 const Tab3: React.FC = () =>  {
   const [email, setEmail] = useState('');
@@ -40,9 +43,14 @@ const Tab3: React.FC = () =>  {
 
    // const serverurl = "https://157.245.63.46:443/";
 //    const serverurl = "http://157.245.63.46:8080";
-    const serverurl = "http://157.245.63.46:1337";
+//    const serverurl = "http://157.245.63.46:1337";
+ //   const serverurl = "http://172.31.5.90:1337";
 
-  const ipfs = ipfsClient('/ip4/157.245.63.46/tcp/5001')
+//  const ipfs = ipfsClient('/ip4/172.31.5.90/tcp/5001')
+const serverurl = configdata.sailsurl;
+
+  const ipfs = ipfsClient(configdata.apilink) ;
+
 
 /*
 ipfsClient({
@@ -73,9 +81,9 @@ ipfsClient({
      return;
     };
 
-    if(userinfo != null )
+    if(userinfo)
     {
-        console.log(tuserinfo);
+        console.log(userinfo);
 	setUsername(userinfo.username);
 	setUserid(userinfo.userid);
 	setEmail(userinfo.email);
@@ -91,7 +99,9 @@ ipfsClient({
 
     logintest();
 
-    getconfig();
+    if(userid !== '' ) {
+      getconfig();
+    }
 
     var tmpipfs = localStorage.getItem("ipfsconfig");
 
@@ -343,6 +353,11 @@ ipfsClient({
 */
   const getconfig = async () => {
   var url = serverurl + "/api/ipfsnode/getipfsconfig";
+   if(userid === '') {
+         setError("Userid not set");
+         setShowErrorAlert(true);
+     return;
+  }
    var cred = {
 	userid: userid,
 	nodetype: nodetype

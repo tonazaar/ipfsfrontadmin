@@ -9,6 +9,8 @@ import ipfsClient from 'ipfs-http-client';
 
 
 import './Tab2.css';
+import configdata from './config.json';
+
 
 const { Storage } = Plugins;
 
@@ -38,10 +40,16 @@ const Tab2: React.FC = () =>  {
  const trashicon = trash;
 
   // const serverurl = "http://157.245.63.46:8080";
-   const serverurl = "http://157.245.63.46:1337";
+// const serverurl = "http://172.31.5.90:1337";
+const serverurl = configdata.sailsurl;
+
+  const ipfs = ipfsClient(configdata.apilink) ;
 
 
-  const ipfs = ipfsClient('/ip4/157.245.63.46/tcp/5001')
+//   const serverurl = "http://157.245.63.46:1337";
+
+
+//  const ipfs = ipfsClient('/ip4/157.245.63.46/tcp/5001')
 
 
   var ipfsconfig : any = {
@@ -74,7 +82,7 @@ const Tab2: React.FC = () =>  {
      return;
     };
 
-    if(userinfo != null )
+    if(userinfo)
     {
         console.log(tuserinfo);
 //        setUsername(userinfo.username);
@@ -82,8 +90,9 @@ const Tab2: React.FC = () =>  {
 //        setEmail(userinfo.email);
     }
 
-    getconfig();
-
+    if(userid !== '') {
+      getconfig();
+    }
 
     var tmpipfs = localStorage.getItem("ipfsconfig");
 
@@ -112,6 +121,12 @@ const Tab2: React.FC = () =>  {
 
   const getconfig = async () => {
   var url = serverurl + "/api/ipfsnode/getipfsconfig";
+   if(userid === '') {
+         setError("Userid not set");
+         setShowErrorAlert(true);
+     return;
+  }
+
    var cred = {
         userid: userid,
         nodetype: nodetype

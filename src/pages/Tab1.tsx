@@ -811,7 +811,7 @@ const saveToIpfsWithFilename = async (files) => {
      }
 
 
-   var url = serverurl + "/api/ipfsadmin/disableuser";
+   var url = serverurl + "/api/ipfsadmin/expandusagelimit";
    var cred = { 
         userid: workinguser,
         newusagelimit: newusagelimit
@@ -1065,11 +1065,11 @@ const saveToIpfsWithFilename = async (files) => {
             <IonCard>
 
             <IonItem>
-              <IonInput name="newusagelimit" placeholder="Limit to add" type="text" value={newusagelimit} spellCheck={false} autocapitalize="off" onIonChange={e => setNewusagelimit(e.detail.value!)}>
+              <IonInput name="newusagelimit" placeholder="File usage limit to add" type="text" value={newusagelimit} spellCheck={false} autocapitalize="off" onIonChange={e => setNewusagelimit(e.detail.value!)}>
               </IonInput>
             </IonItem>
             <IonItem>
-              <IonInput name="usagetoadd" placeholder="Usage to add" type="text" value={usagetoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setUsagetoadd(e.detail.value!)}>
+              <IonInput name="usagetoadd" placeholder="Token usage to add" type="text" value={usagetoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setUsagetoadd(e.detail.value!)}>
               </IonInput>
             </IonItem>
             <IonItem>

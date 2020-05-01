@@ -755,7 +755,7 @@ const saveToIpfsWithFilename = async (files) => {
 
 
             <IonItem>
-              <IonInput name="usagetoadd" placeholder="Usage to add" type="text" value={usagetoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setUsagetoadd(e.detail.value!)}>
+              <IonInput name="usagetoadd" placeholder="Demo usage, earning to add" type="text" value={usagetoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setUsagetoadd(e.detail.value!)}>
               </IonInput>
             </IonItem>
             <IonItem>

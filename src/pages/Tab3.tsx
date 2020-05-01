@@ -49,7 +49,7 @@ const Tab3: React.FC = () =>  {
 //  const ipfs = ipfsClient('/ip4/172.31.5.90/tcp/5001')
 const serverurl = configdata.sailsurl;
 
-  const ipfs = ipfsClient(configdata.apilink) ;
+  var ipfs = ipfsClient(configdata.apilink) ;
 
 
 /*
@@ -111,6 +111,12 @@ ipfsClient({
       setShowLoginAlert(true);
       return;
      }
+     else {
+      var ipfsconfig = JSON.parse(tmpipfs);
+      ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
 
    });
 

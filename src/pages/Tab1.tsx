@@ -105,6 +105,14 @@ ipfsClient({
       setShowLoginAlert(true);
       return;
      }
+/*
+     else {
+      ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+     }
+*/
+
+
 
      listusers();
    });

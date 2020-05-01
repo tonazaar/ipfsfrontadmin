@@ -41,7 +41,7 @@ const Tabjoin: React.FC = () =>  {
 //    const serverurl = "http://157.245.63.46:8080";
 const serverurl = configdata.sailsurl;
 
-  const ipfs = ipfsClient(configdata.apilink) ;
+  var ipfs = ipfsClient(configdata.apilink) ;
 
 
 
@@ -103,6 +103,11 @@ ipfsClient({
       setLoginalert("Config not created");
       setShowLoginAlert(true);
       return;
+     } else {
+       var ipfsconfig = JSON.parse(tmpipfs);
+       ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+
      }
 
    });

@@ -43,7 +43,7 @@ const Tab2: React.FC = () =>  {
 // const serverurl = "http://172.31.5.90:1337";
 const serverurl = configdata.sailsurl;
 
-  const ipfs = ipfsClient(configdata.apilink) ;
+  var ipfs = ipfsClient(configdata.apilink) ;
 
 
 //   const serverurl = "http://157.245.63.46:1337";
@@ -100,6 +100,7 @@ const serverurl = configdata.sailsurl;
 
     if(tmpipfs != null) {
     ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
     console.log(ipfsconfig);
 
     }else {
@@ -298,14 +299,16 @@ const serverurl = configdata.sailsurl;
   const listFiles = async (dir) => {
     var options = {};
 
-/*
-    var tmpss = localStorage.getItem("ipfsconfig");
-    if(tmpss != null) {
-    ipfsconfig = JSON.parse(tmpss);
+
+   var tmpipfs = localStorage.getItem("ipfsconfig");
+
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
     console.log(ipfsconfig);
     }
 
-*/
+
 
  var source = ipfs.files.ls(dir, options)
     var testarray = [] as any;
@@ -340,6 +343,14 @@ const serverurl = configdata.sailsurl;
 
   const liststat = async (dir) => {
     var options = {};
+    var tmpipfs = localStorage.getItem("ipfsconfig");
+
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
     var source = await ipfs.files.stat(dir , options)
      setStatvalue(source.cumulativeSize);
 

@@ -461,6 +461,14 @@ const saveToIpfsWithFilename = async (files) => {
 
   const listfiles = async () => {
     var options = {};
+    var tmpipfs = localStorage.getItem("ipfsconfig");
+
+    if(tmpipfs != null) {
+    var ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
  var source = ipfs.files.ls('/user1/contents/', options)
      var arraylength = 0;
     try {
@@ -697,6 +705,15 @@ const saveToIpfsWithFilename = async (files) => {
 
   const liststat = async () => {
     var options = {};
+    var tmpipfs = localStorage.getItem("ipfsconfig");
+
+    if(tmpipfs != null) {
+    var ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
+
     var source = await ipfs.files.stat('/user1/contents/', options)
         console.log(source)
         setStatvalue(source.cumulativeSize);

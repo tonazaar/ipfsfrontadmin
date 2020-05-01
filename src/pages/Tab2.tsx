@@ -236,6 +236,16 @@ const serverurl = configdata.sailsurl;
     console.log(ipfsconfig);
     }
 */
+
+   var tmpipfs = localStorage.getItem("ipfsconfig");
+
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
+
    var the_arr = dir.split('/');
     var lastdir = the_arr.pop();
     if(lastdir === '')
@@ -277,6 +287,16 @@ const serverurl = configdata.sailsurl;
   const checkandcreatedir = async (dir) => {
 
     var options = {};
+
+     var tmpipfs = localStorage.getItem("ipfsconfig");
+
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
+
     var source = ipfs.files.ls(dir, options)
     try {
       for await (const file of source) {
@@ -383,6 +403,15 @@ const serverurl = configdata.sailsurl;
 */
   const newmkdirfunc = async () => {
     var options = {parents: true};
+     var tmpipfs = localStorage.getItem("ipfsconfig");
+
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
+
     if(dirtomake.length < 1) return; 
     var source = await ipfs.files.mkdir(directory+"/"+dirtomake, options)
         console.log(source)
@@ -391,6 +420,15 @@ const serverurl = configdata.sailsurl;
 
   const deletefile = async (cid) => {
     var options = {};
+     var tmpipfs = localStorage.getItem("ipfsconfig");
+
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
+
     var source = await ipfs.files.rm(cid, options)
         console.log(source)
     listFiles(directory);
@@ -403,6 +441,14 @@ const saveToIpfsWithFilename = async (files) => {
     const options = {
     create: true
     }
+    var tmpipfs = localStorage.getItem("ipfsconfig");
+
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
 
       await Storage.set({ key: 'user', value: 'user1' });
     var source = await ipfs.files.write(directory +'/'+file.name, file, options)

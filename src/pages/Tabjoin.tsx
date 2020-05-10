@@ -13,7 +13,7 @@ import configdata from './config.json';
 //const { Storage } = Plugins;
 const Tabjoin: React.FC = () =>  {
   const [email, setEmail] = useState('');
-  const [nodeidtoadd, setNodeidtoadd] = useState('');
+  const [nodenametoadd, setNodenametoadd] = useState('');
   const [nodegrouptoadd, setNodegrouptoadd] = useState('');
   const [username, setUsername] = useState('');
   const [userid, setUserid] = useState('');
@@ -277,7 +277,10 @@ ipfsClient({
         (res) => {
          console.log(res);
 //         setNodemessage(JSON.stringify(res));
+         if(!res.response) {
          setMylistnodes(res);
+         }
+
         },      
         (err) => {
          setError(err);
@@ -290,7 +293,8 @@ ipfsClient({
   const listprivatenodes = async () => {
   var url = serverurl + "/api/nodeoperation/listprivatenodes";
    var cred = {
-	userid: userid
+	userid: userid,
+        nodetype: 'privatenode',
    };
   fetch(url, {
             method: 'POST',
@@ -305,7 +309,9 @@ ipfsClient({
         (res) => {
          console.log(res);
 //         setNodemessage(JSON.stringify(res));
+         if(!res.response) {
          setMylistnodes(res);
+         }
         },      
         (err) => {
          setError(err);
@@ -318,7 +324,8 @@ ipfsClient({
   const listclusternodes = async () => {
   var url = serverurl + "/api/nodeoperation/listclusternodes";
    var cred = {
-	userid: userid
+	userid: userid,
+        nodetype: 'clusternode',
    };
   fetch(url, {
             method: 'POST',
@@ -333,7 +340,9 @@ ipfsClient({
         (res) => {
          console.log(res);
 //         setNodemessage(JSON.stringify(res));
+           if(!res.response) {
          setMylistnodes(res);
+           }
         },      
         (err) => {
          setError(err);
@@ -527,9 +536,9 @@ const saveToIpfsWithFilename = async (files) => {
 
   const joinnodecluster = async () => {
 
-     if(nodeidtoadd === '')
+     if(nodenametoadd === '')
      {
-        setMessage("Enter nodeid to add ");
+        setMessage("Enter nodenametoadd to add ");
         showMessageAlert(true);
         return;
      }
@@ -545,7 +554,7 @@ const saveToIpfsWithFilename = async (files) => {
    var url = serverurl + "/api/nodeoperation/joinnodecluster";
    var cred = { 
         userid: userid,
-        nodeid: nodeidtoadd,
+        nodename: nodenametoadd,
         nodetype: 'clusternode',
         nodegroup: nodegrouptoadd,
         
@@ -576,9 +585,9 @@ const saveToIpfsWithFilename = async (files) => {
 
   const joinnodepublic = async () => {
 
-     if(nodeidtoadd === '')
+     if(nodenametoadd === '')
      {
-        setMessage("Enter nodeid to add ");
+        setMessage("Enter nodenametoadd to add ");
         showMessageAlert(true);
         return;
      }
@@ -594,7 +603,7 @@ const saveToIpfsWithFilename = async (files) => {
    var url = serverurl + "/api/nodeoperation/joinnodepublic";
    var cred = { 
         userid: userid,
-        nodeid: nodeidtoadd,
+        nodename: nodenametoadd,
         nodetype: 'publicnode',
         nodegroup: nodegrouptoadd,
         
@@ -718,9 +727,9 @@ const saveToIpfsWithFilename = async (files) => {
 
   const joinnodeprivate = async () => {
 
-     if(nodeidtoadd === '')
+     if(nodenametoadd === '')
      {
-        setMessage("Enter nodeid to add ");
+        setMessage("Enter nodename to add ");
         showMessageAlert(true);
         return;
      }
@@ -736,7 +745,7 @@ const saveToIpfsWithFilename = async (files) => {
    var url = serverurl + "/api/nodeoperation/joinnodeprivate";
    var cred = { 
         userid: userid,
-        nodeid: nodeidtoadd,
+        nodename: nodenametoadd,
         nodetype: 'privatenode',
         nodegroup: nodegrouptoadd,
         
@@ -840,7 +849,7 @@ const saveToIpfsWithFilename = async (files) => {
 
 
             <IonItem>
-              <IonInput name="nodeidtoadd" placeholder="Node id to add" type="text" value={nodeidtoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setNodeidtoadd(e.detail.value!)}>
+              <IonInput name="nodenametoadd" placeholder="Node id to add" type="text" value={nodenametoadd} spellCheck={false} autocapitalize="off" onIonChange={e => setNodenametoadd(e.detail.value!)}>
               </IonInput>
             </IonItem>
             <IonItem>

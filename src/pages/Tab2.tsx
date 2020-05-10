@@ -297,6 +297,8 @@ const serverurl = configdata.sailsurl;
     }
 
 
+   checkbasedirentry(dir);
+
     var source = ipfs.files.ls(dir, options)
     try {
       for await (const file of source) {
@@ -310,11 +312,14 @@ const serverurl = configdata.sailsurl;
       var options1 = {parents: true};
         source = await ipfs.files.mkdir(dir , options1)
       console.log(source);
+       createbasedirentry( dir);
     }
 
 
 
   };
+
+
 
   const listFiles = async (dir) => {
     var options = {};
@@ -336,9 +341,9 @@ const serverurl = configdata.sailsurl;
       for await (const file of source) {
         console.log(file)
         //mylist1.push( {key:('hh'+ p++), value:file}); 
-
+        console.log("dummy="+localgateway);
         var publicurl = 'https://ipfs.io/ipfs/'+file.cid.toString()
-        var privateurl = localgateway + '/ipfs/'+file.cid.toString()
+        var privateurl = ipfsconfig.localgateway + '/ipfs/'+file.cid.toString()
 
         var obj = {
          name: file.name,
@@ -371,10 +376,15 @@ const serverurl = configdata.sailsurl;
     console.log(ipfsconfig);
     }
 
+    try {
     var source = await ipfs.files.stat(dir , options)
      setStatvalue(source.cumulativeSize);
 
-        console.log(source)
+        console.log(source);
+     } catch(err) {
+
+        console.log(err);
+     }
 
   };
  
@@ -441,6 +451,7 @@ const saveToIpfsWithFilename = async (files) => {
     const options = {
     create: true
     }
+
     var tmpipfs = localStorage.getItem("ipfsconfig");
 
     if(tmpipfs != null) {
@@ -469,16 +480,137 @@ const saveToIpfsWithFilename = async (files) => {
         listFiles(directory);
   };
 
-  const saveinserver = async ( x ) => {
+  const createbasedirentry = async (x) => {
 
-   var url = serverurl + "/api/ipfsusage/savefile";
+    var tmpipfs = localStorage.getItem("ipfsconfig");
+    var ipfsconfig;
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
+   var url = serverurl + "/api/ipfsusage/createbasepath";
 
    var cred = {
-        userid: 'user1',
+        userid: userid,
         name: x.name,
         path: x.path,
         hash: x.hash, 
         cid: x.cid, 
+        nodeid:ipfsconfig.nodeid,
+        nodename:ipfsconfig.nodename,
+        nodegroup:ipfsconfig.nodegroup,
+   };
+
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },
+            body: JSON.stringify(cred)
+     })
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+        },
+        (err) => {
+      setError(err);
+      setShowErrorAlert(true);
+          console.log(err)
+        }
+      )
+
+  };
+
+/*
+      await Storage.set({ key: 'user', value: 'user1' });
+    var source = await ipfs.files.write(directory +'/'+file.name, file, options)
+        console.log(source)
+        source = ipfs.files.ls(directory +'/'+file.name, options);
+         var file1 = await source.next();
+	  console.log( file1.value.cid.toString() )
+        
+        setFilename(directory +'/'+ file.name);
+        setFilehash(file1.value.cid.toString());
+        var x = {
+	  hash: file1.value.cid.toString(),
+	  name: file.name,
+	  cid: file1.value.cid.toString(),
+	  path: directory
+        };
+        saveinserver(x);
+        listFiles(directory);
+  };
+*/
+  const checkbasedirentry = async (x) => {
+
+    var tmpipfs = localStorage.getItem("ipfsconfig");
+    var ipfsconfig;
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
+   var url = serverurl + "/api/ipfsusage/listbasepaths";
+
+   var cred = {
+        userid: userid,
+        name: x.name,
+        path: x.path,
+        hash: x.hash, 
+        cid: x.cid, 
+        nodeid:ipfsconfig.nodeid,
+        nodename:ipfsconfig.nodename,
+        nodegroup:ipfsconfig.nodegroup,
+   };
+
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },
+            body: JSON.stringify(cred)
+     })
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+        },
+        (err) => {
+      setError(err);
+      setShowErrorAlert(true);
+          console.log(err)
+        }
+      )
+
+  };
+
+  const saveinserver = async ( x ) => {
+
+    var tmpipfs = localStorage.getItem("ipfsconfig");
+    var ipfsconfig;
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
+   var url = serverurl + "/api/ipfsusage/savefile";
+
+   var cred = {
+        userid: userid,
+        name: x.name,
+        path: x.path,
+        hash: x.hash, 
+        cid: x.cid, 
+        nodeid:ipfsconfig.nodeid,
+        nodename:ipfsconfig.nodename,
+        nodegroup:ipfsconfig.nodegroup,
    };
 
   fetch(url, {

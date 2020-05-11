@@ -297,12 +297,11 @@ const serverurl = configdata.sailsurl;
     }
 
 
-   checkbasedirentry(dir);
 
     var source = ipfs.files.ls(dir, options)
     try {
       for await (const file of source) {
-        console.log(file)
+        console.log("dir="+file)
         //mylist1.push( {key:('hh'+ p++), value:file}); 
        }
      } catch (err) {
@@ -312,7 +311,36 @@ const serverurl = configdata.sailsurl;
       var options1 = {parents: true};
         source = await ipfs.files.mkdir(dir , options1)
       console.log(source);
-       createbasedirentry( dir);
+    }
+
+
+   source = ipfs.files.ls("/", options)
+   var found = false;
+    try {
+      for await (const file of source) {
+        console.log("dir1="+JSON.stringify(file))
+        if(("/"+file.name) === dir) {
+          found = true;
+           var x = {
+          hash: file.cid.toString(),
+          name: file.name,
+          cid: file.cid.toString(),
+          path: dir,
+        nodeid:ipfsconfig.nodeid,
+        nodename:ipfsconfig.nodename,
+        nodegroup:ipfsconfig.nodegroup,
+         };
+
+          checkbasedirentry(x);
+        }
+        //mylist1.push( {key:('hh'+ p++), value:file});
+       }
+     } catch (err) {
+      setError(err);
+      console.error(err)
+     }
+
+    if(found) {
     }
 
 
@@ -424,7 +452,7 @@ const serverurl = configdata.sailsurl;
 
     if(dirtomake.length < 1) return; 
     var source = await ipfs.files.mkdir(directory+"/"+dirtomake, options)
-        console.log(source)
+        console.log("newmkdir= "+source)
     listFiles(directory);
   };
 
@@ -474,7 +502,10 @@ const saveToIpfsWithFilename = async (files) => {
 	  hash: file1.value.cid.toString(),
 	  name: file.name,
 	  cid: file1.value.cid.toString(),
-	  path: directory
+	  path: directory,
+        nodeid:ipfsconfig.nodeid,
+        nodename:ipfsconfig.nodename,
+        nodegroup:ipfsconfig.nodegroup,
         };
         saveinserver(x);
         listFiles(directory);
@@ -539,7 +570,10 @@ const saveToIpfsWithFilename = async (files) => {
 	  hash: file1.value.cid.toString(),
 	  name: file.name,
 	  cid: file1.value.cid.toString(),
-	  path: directory
+	  path: directory,
+        nodeid:ipfsconfig.nodeid,
+        nodename:ipfsconfig.nodename,
+        nodegroup:ipfsconfig.nodegroup,
         };
         saveinserver(x);
         listFiles(directory);
@@ -580,6 +614,9 @@ const saveToIpfsWithFilename = async (files) => {
       .then(
         (res) => {
          console.log(res);
+         if(res.response) {
+         createbasedirentry( cred);
+         }
         },
         (err) => {
       setError(err);

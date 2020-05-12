@@ -135,7 +135,7 @@ const serverurl = configdata.sailsurl;
 
 
   const listbasepathnodes = async (x) => {
-  var url = serverurl + "/api/nodeoperation/listbasepathnodes";
+  var url = serverurl + "/api/ipfsusage/listbasepaths";
    var cred = {
         userid: userid,
         basepath: x ,

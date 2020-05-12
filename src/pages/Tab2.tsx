@@ -571,7 +571,7 @@ const saveToIpfsWithFilename = async (files) => {
    var url = serverurl + "/api/ipfsusage/createbasepath";
 
    var cred = {
-        userid: userid,
+        userid: ipfsconfig.userid,
         name: x.name,
         path: x.path,
         hash: x.hash, 
@@ -669,7 +669,7 @@ const saveToIpfsWithFilename = async (files) => {
       .then(
         (res) => {
          console.log(res);
-         if(res.response) {
+         if(res.length === 0) {
          createbasedirentry( cred);
          }
         },

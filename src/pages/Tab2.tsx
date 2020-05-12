@@ -629,17 +629,25 @@ const saveToIpfsWithFilename = async (files) => {
   const checkbasedirentry = async (x) => {
 
     var tmpipfs = localStorage.getItem("ipfsconfig");
+
+    if(tmpipfs === null) {
+      getconfig();
+    }
     var ipfsconfig;
     if(tmpipfs != null) {
     ipfsconfig = JSON.parse(tmpipfs);
     ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
     console.log(ipfsconfig);
+    }else {
+
+    console.log("config not vailable="+ipfsconfig);
+    return;
     }
 
    var url = serverurl + "/api/ipfsusage/listbasepaths";
 
    var cred = {
-        userid: userid,
+        userid: ipfsconfig.userid,
         name: x.name,
         path: x.path,
         hash: x.hash, 

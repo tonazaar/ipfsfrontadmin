@@ -23,6 +23,10 @@ const Tab2: React.FC = () =>  {
   const [filename, setFilename] = useState('');
   const [usagelimit, setUsagelimit] = useState(0);
   const [directory, setDirectory] = useState('/user1/contents/');
+  const [workingnode, setWorkingnode] = useState('');
+
+  const [mylistnodes, setMylistnodes] = React.useState([]);
+
   const [statvalue, setStatvalue] = useState(0);
   const [mylist, setMylist] = React.useState([]);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
@@ -119,6 +123,49 @@ const serverurl = configdata.sailsurl;
     listNewDirectory('/'+ ipfsconfig.userid);
     liststat('/'+ ipfsconfig.userid);
   });
+
+  const selectnode = async (node) => {
+        setWorkingnode(node);
+        console.log(workingnode);
+        setMessage("Selected "+ workingnode);
+        setShowMessageAlert(true);
+        //showMessageAlert(true);
+
+  };
+
+
+  const listbasepathnodes = async (x) => {
+  var url = serverurl + "/api/nodeoperation/listbasepathnodes";
+   var cred = {
+        userid: userid,
+        basepath: x ,
+   };
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },
+            body: JSON.stringify(cred)
+     })
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+//         setNodemessage(JSON.stringify(res));
+         if(!res.response) {
+         setMylistnodes(res);
+         }
+
+        },
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }
+      )
+  }
+
 
   const getconfig = async () => {
   var url = serverurl + "/api/ipfsnode/getipfsconfig";
@@ -708,9 +755,63 @@ const saveToIpfsWithFilename = async (files) => {
               <IonLabel color="primary"> {userid} </IonLabel>
     </IonCol>
   </IonRow>
+  <IonRow>
+    <IonCol>
+              <IonLabel color="primary">Remotes  </IonLabel>
+    </IonCol>
+
+    <IonCol>
+     <IonButton size="small" shape="round" fill="outline"   onClick={()=>listbasepathnodes(userid)}  >
+       List
+    </IonButton>
+    </IonCol>
+  </IonRow>
+
+
+
       </IonGrid>
             </IonItem >
 
+   <IonCard >
+     <IonCardHeader>
+    Remote nodes 
+     </IonCardHeader>
+
+       {
+           mylistnodes.map((a, index) =>      {
+         return (
+            <IonItem key={'somerandomghxx'+index}>
+      
+           <IonLabel class="ion-text-wrap">
+      <IonGrid>
+  <IonRow>
+    <IonCol>
+      <IonText color="danger">
+        <h3> {a['nodegroup']} </h3>
+        <h4> {a['nodename']} </h4>
+      </IonText>
+    </IonCol>
+    <IonCol>
+    </IonCol>
+    <IonCol>
+     <IonButton size="small" shape="round" fill="outline"   onClick={()=>selectnode(a['nodeid'])}  >
+       {a['nodeid']}
+    </IonButton>
+    </IonCol>
+    <IonCol>
+    </IonCol>
+  </IonRow>
+      </IonGrid>
+
+    </IonLabel>
+            </IonItem>
+
+      ) 
+
+          })
+       }  
+
+   </IonCard >
             <IonItem >
       <IonGrid>
   <IonRow>

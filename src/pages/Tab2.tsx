@@ -153,7 +153,7 @@ const serverurl = configdata.sailsurl;
         (res) => {
          console.log(res);
 //         setNodemessage(JSON.stringify(res));
-         if(!res.response) {
+         if(res.length >=0) {
          setMylistnodes(res);
          }
 
@@ -795,8 +795,8 @@ const saveToIpfsWithFilename = async (files) => {
   <IonRow>
     <IonCol>
       <IonText color="danger">
-        <h3> {a['nodegroup']} </h3>
-        <h4> {a['nodename']} </h4>
+        <h3> Group:  {a['nodegroup']} </h3>
+        <h4> Id: {a['nodeid']} </h4>
       </IonText>
     </IonCol>
     <IonCol>

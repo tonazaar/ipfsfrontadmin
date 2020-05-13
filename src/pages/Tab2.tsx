@@ -415,7 +415,7 @@ const serverurl = configdata.sailsurl;
 
 
     var dir1 = new CID(dir);
- var source = ipfs.files.ls(dir1, options)
+ var source = ipfs.ls(dir1, options)
     var testarray = [] as any;
     try {
       for await (const file of source) {
@@ -427,7 +427,7 @@ const serverurl = configdata.sailsurl;
 
         var obj = {
          name: file.name,
-         type: file.type,
+         type: (file.type==='dir')? 1: 0,
          cid: file.cid.toString(),
          fullpath: null,
          publicurl: publicurl,
@@ -693,7 +693,7 @@ const saveToIpfsWithFilename = async (files) => {
     return;
     }
 
-   var url = serverurl + "/api/ipfsusage/listbasepaths";
+   var url = serverurl + "/api/ipfsusage/checkbasepaths";
 
    var cred = {
         userid: ipfsconfig.userid,
@@ -852,7 +852,7 @@ const saveToIpfsWithFilename = async (files) => {
     </IonCol>
     <IonCol>
      <IonButton size="small" shape="round" fill="outline"   onClick={()=>selectnode(a)}  >
-       {a['nodeid']}
+       {a['nodename']}
     </IonButton>
     </IonCol>
     <IonCol>

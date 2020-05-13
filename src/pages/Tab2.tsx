@@ -7,6 +7,7 @@ import { IonBadge, IonCardHeader, IonCard, useIonViewWillEnter, useIonViewDidEnt
 import { trash } from 'ionicons/icons';
 import ipfsClient from 'ipfs-http-client';
 
+import { CID } from 'ipfs-http-client';
 
 import './Tab2.css';
 import configdata from './config.json';
@@ -125,10 +126,12 @@ const serverurl = configdata.sailsurl;
   });
 
   const selectnode = async (node) => {
-        setWorkingnode(node);
+        setWorkingnode(node.nodeid);
+        console.log(JSON.stringify(node));
         console.log(workingnode);
         setMessage("Selected "+ workingnode);
         setShowMessageAlert(true);
+        listdagFiles(node.hash);
         //showMessageAlert(true);
 
   };
@@ -395,6 +398,52 @@ const serverurl = configdata.sailsurl;
   };
 
 
+
+
+  const listdagFiles = async (dir) => {
+    var options = {};
+
+
+   var tmpipfs = localStorage.getItem("ipfsconfig");
+
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
+
+
+    var dir1 = new CID(dir);
+ var source = ipfs.files.ls(dir1, options)
+    var testarray = [] as any;
+    try {
+      for await (const file of source) {
+        console.log(file)
+        //mylist1.push( {key:('hh'+ p++), value:file}); 
+        console.log("dummy="+localgateway);
+        var publicurl = 'https://ipfs.io/ipfs/'+file.cid.toString()
+        var privateurl = ipfsconfig.localgateway + '/ipfs/'+file.cid.toString()
+
+        var obj = {
+         name: file.name,
+         type: file.type,
+         cid: file.cid.toString(),
+         fullpath: null,
+         publicurl: publicurl,
+         privateurl: privateurl,
+        };
+        testarray.push(obj); 
+      }
+            setMylist(testarray);
+    } catch (err) {
+      setError(err);
+      setShowErrorAlert(true);
+
+      console.error(err)
+    }
+
+  };
 
   const listFiles = async (dir) => {
     var options = {};
@@ -802,7 +851,7 @@ const saveToIpfsWithFilename = async (files) => {
     <IonCol>
     </IonCol>
     <IonCol>
-     <IonButton size="small" shape="round" fill="outline"   onClick={()=>selectnode(a['nodeid'])}  >
+     <IonButton size="small" shape="round" fill="outline"   onClick={()=>selectnode(a)}  >
        {a['nodeid']}
     </IonButton>
     </IonCol>
@@ -942,9 +991,15 @@ const saveToIpfsWithFilename = async (files) => {
     <IonCol>
     </IonCol>
     <IonCol>
-     <IonButton size="small" shape="round" fill="outline"  onClick={()=>listNewDirectory(a['fullpath'])} >
+     { a['fullpath'] ? ( <IonButton size="small" shape="round" fill="outline"  onClick={()=>listNewDirectory(a['fullpath'])} >
        Directory
     </IonButton>
+     ) : (
+     <IonButton size="small" shape="round" fill="outline"  onClick={()=>listdagFiles(a['cid'])} >
+       RemDirectory
+    </IonButton>
+       )
+    }
     </IonCol>
     <IonCol>
     </IonCol>

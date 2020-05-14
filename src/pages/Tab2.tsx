@@ -141,7 +141,7 @@ const serverurl = configdata.sailsurl;
   var url = serverurl + "/api/ipfsusage/listbasepaths";
    var cred = {
         userid: userid,
-        basepath: x ,
+        path: "/"+x ,
    };
   fetch(url, {
             method: 'POST',
@@ -255,6 +255,13 @@ const serverurl = configdata.sailsurl;
     setMysegments(segmentstouse);
     console.log(JSON.stringify(segmentstouse));
  
+  };
+
+  const listNewDagDirectory = async (newdirdag) => {
+    //preSaveDagDirectory(newdir); 
+    //prepareDisplayDirectory(newdir);
+    console.log(JSON.stringify(newdirdag));
+    listdagFiles(newdirdag.cid);
   };
 
   const listNewDirectory = async (newdir) => {
@@ -415,6 +422,8 @@ const serverurl = configdata.sailsurl;
 
 
     var dir1 = new CID(dir);
+    console.log("dir="+ dir);
+    console.log("dir1="+ dir1);
  var source = ipfs.ls(dir1, options)
     var testarray = [] as any;
     try {
@@ -995,7 +1004,7 @@ const saveToIpfsWithFilename = async (files) => {
        Directory
     </IonButton>
      ) : (
-     <IonButton size="small" shape="round" fill="outline"  onClick={()=>listdagFiles(a['cid'])} >
+     <IonButton size="small" shape="round" fill="outline"  onClick={()=>listNewDagDirectory(a)} >
        RemDirectory
     </IonButton>
        )

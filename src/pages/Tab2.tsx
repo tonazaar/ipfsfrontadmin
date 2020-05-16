@@ -126,15 +126,63 @@ const serverurl = configdata.sailsurl;
   });
 
   const selectnode = async (node) => {
+// getnodedata
+/*
         setWorkingnode(node.nodeid);
         console.log(JSON.stringify(node));
         console.log(workingnode);
         setMessage("Selected "+ workingnode);
         setShowMessageAlert(true);
         listdagFiles(node.hash);
+*/
         //showMessageAlert(true);
 
   };
+
+   const getremotenodedata = async (x) => {
+    var tmpipfs = localStorage.getItem("ipfsconfig");
+
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+
+
+  var url = serverurl + "/api/ipfsnode/getnodedata";
+   var cred = {
+        userid: ipfsconfig.userid,
+         nodeid:ipfsconfig.nodeid,
+        nodename:ipfsconfig.nodename,
+        nodegroup:ipfsconfig.nodegroup,
+
+   };
+  fetch(url, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "" + localStorage.getItem("token"),
+            },
+            body: JSON.stringify(cred)
+     })
+      .then(res => res.json())
+      .then(
+        (res) => {
+         console.log(res);
+         if( res && !res.response ) {
+         localStorage.setItem("remotenodeselected", JSON.stringify(res) );
+         }else {
+          console.log(res);
+         }
+
+        },
+        (err) => {
+         setError(err);
+         setShowErrorAlert(true);
+          console.log(err)
+        }
+      )
+  }
 
 
   const listbasepathnodes = async (x) => {
@@ -257,12 +305,14 @@ const serverurl = configdata.sailsurl;
  
   };
 
+/*
   const listNewDagDirectory = async (newdirdag) => {
     //preSaveDagDirectory(newdir); 
     //prepareDisplayDirectory(newdir);
     console.log(JSON.stringify(newdirdag));
     listdagFiles(newdirdag.cid);
   };
+*/
 
   const listNewDirectory = async (newdir) => {
     preSaveDirectory(newdir); 
@@ -407,6 +457,7 @@ const serverurl = configdata.sailsurl;
 
 
 
+/*
   const listdagFiles = async (dir) => {
     var options = {};
 
@@ -453,6 +504,7 @@ const serverurl = configdata.sailsurl;
     }
 
   };
+*/
 
   const listFiles = async (dir) => {
     var options = {};

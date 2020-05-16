@@ -34,6 +34,7 @@ const Tab2: React.FC = () =>  {
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [showMessageAlert, setShowMessageAlert] = useState(false);
   const [showLoginAlert, setShowLoginAlert] = useState(false);
+  const [remoteactive, setRemoteactive] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [loginmessage, setLoginmessage] = useState('');
@@ -128,23 +129,13 @@ const serverurl = configdata.sailsurl;
   });
 
   const selectnode = async (node) => {
-// getnodedata
-/*
-        setWorkingnode(node.nodeid);
-        console.log(JSON.stringify(node));
-        console.log(workingnode);
-        setMessage("Selected "+ workingnode);
-        setShowMessageAlert(true);
-        listdagFiles(node.hash);
-*/
-        //showMessageAlert(true);
 
-  getremotenodedata(node) ;
+        getremotenodedata(node) ;
         setWorkingnode(node.nodeid);
-         //localStorage.setItem("remotenodeselected", JSON.stringify(res) );
+        setRemoteactive(true);
+        listNewRemoteDirectory('/'+ node.userid);
         setMessage("Selected "+ workingnode);
         setShowMessageAlert(true);
-        listNewRemoteDirectory('/'+ node.userid);
   };
 
    const getremotenodedata = async (x) => {
@@ -346,25 +337,23 @@ const serverurl = configdata.sailsurl;
  
   };
 
-/*
-  const listNewDagDirectory = async (newdirdag) => {
-    //preSaveDagDirectory(newdir); 
-    //prepareDisplayDirectory(newdir);
-    console.log(JSON.stringify(newdirdag));
-    listdagFiles(newdirdag.cid);
-  };
-*/
 
   const listNewDirectory = async (newdir) => {
+        setRemoteactive(false);
     preSaveDirectory(newdir); 
     prepareDisplayDirectory(newdir);
     listFiles(newdir);
   };
 
+  const listlocalFiles = async (newdir) => {
+        setRemoteactive(false);
+    listFiles(newdir);
+  }
   const listNewRemoteDirectory = async (newdir) => {
+        setRemoteactive(true);
     preSaveRemoteDirectory(newdir); 
     prepareDisplayRemoteDirectory(newdir);
-    listFiles(newdir);
+    listRemoteFiles(newdir);
   };
 
    const preSaveRemoteDirectory = async (dir) => {
@@ -613,6 +602,57 @@ const serverurl = configdata.sailsurl;
   };
 
 
+  const listRemoteFiles = async (dir) => {
+    var options = {};
+
+
+   var tmpipfs = localStorage.getItem("ipfsconfig");
+   var ripfsconfig;
+
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    //ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+    
+    var ripfs;
+    var remotenode1 = localStorage.getItem("remotenodeselected");
+    if(remotenode1 != null) {
+    ripfsconfig = JSON.parse(remotenode1);
+    ripfs = ipfsClient(ripfsconfig.xconfig.Addresses.API) ;
+    }
+
+
+ var source = ripfs.files.ls(dir, options)
+    var testarray = [] as any;
+    try {
+      for await (const file of source) {
+        console.log(file)
+        //mylist1.push( {key:('hh'+ p++), value:file}); 
+        console.log("dummy="+localgateway);
+        var publicurl = 'https://ipfs.io/ipfs/'+file.cid.toString()
+        var privateurl = ripfsconfig.localgateway + '/ipfs/'+file.cid.toString()
+
+        var obj = {
+         name: file.name,
+         type: file.type,
+         cid: file.cid.toString(),
+         fullpath: dir+"/"+ file.name, 
+         publicurl: publicurl,
+         privateurl: privateurl,
+        };
+        testarray.push(obj); 
+      }
+            setMylist(testarray);
+    } catch (err) {
+      setError(err);
+      setShowErrorAlert(true);
+
+      console.error(err)
+    }
+
+  };
+
   const liststat = async (dir) => {
     var options = {};
     var tmpipfs = localStorage.getItem("ipfsconfig");
@@ -625,6 +665,41 @@ const serverurl = configdata.sailsurl;
 
     try {
     var source = await ipfs.files.stat(dir , options)
+     setStatvalue(source.cumulativeSize);
+
+        console.log(source);
+     } catch(err) {
+
+        console.log(err);
+     }
+
+  };
+
+  const listremotestat = async (dir) => {
+    var options = {};
+    var tmpipfs = localStorage.getItem("ipfsconfig");
+
+    if(tmpipfs != null) {
+    ipfsconfig = JSON.parse(tmpipfs);
+    //ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
+    console.log(ipfsconfig);
+    }
+   
+    if(!remoteactive) {
+        console.log("remote not active");
+      return;
+    }
+
+    var remotenode1 = localStorage.getItem("remotenodeselected");
+    var ripfs;
+      if(remotenode1 != null) {
+     var ripfsconfig = JSON.parse(remotenode1);
+      ripfs = ipfsClient(ripfsconfig.xconfig.Addresses.API) ;
+     }
+
+
+    try {
+    var source = await ripfs.files.stat(dir , options)
      setStatvalue(source.cumulativeSize);
 
         console.log(source);
@@ -679,16 +754,29 @@ const serverurl = configdata.sailsurl;
     var options = {};
      var tmpipfs = localStorage.getItem("ipfsconfig");
 
+    if(remoteactive === true) {
+      var remotenode1 = localStorage.getItem("remotenodeselected");
+      if(remotenode1 != null) {
+      var ripfsconfig = JSON.parse(remotenode1);
+      ipfs = ipfsClient(ripfsconfig.xconfig.Addresses.API) ;
+      }
+    } else {
+
     if(tmpipfs != null) {
     ipfsconfig = JSON.parse(tmpipfs);
     ipfs = ipfsClient(ipfsconfig.config.Addresses.API) ;
     console.log(ipfsconfig);
+      }
     }
 
 
     var source = await ipfs.files.rm(cid, options)
         console.log(source)
+    if(remoteactive === true) {
+    listRemoteFiles(directory);
+    } else {
     listFiles(directory);
+    }
   };
 
 
@@ -1093,7 +1181,7 @@ const saveToIpfsWithFilename = async (files) => {
       <IonGrid>
   <IonRow>
     <IonCol>
-            <IonButton shape="round" fill="outline" onClick={()=>listFiles(directory)} size="small" > List files </IonButton>
+            <IonButton shape="round" fill="outline" onClick={()=>listlocalFiles(directory)} size="small" > List files </IonButton>
     </IonCol>
     <IonCol>
             <IonButton shape="round" fill="outline" onClick={()=>pinFiles(directory)} size="small" > Pin directory </IonButton>
@@ -1106,7 +1194,7 @@ const saveToIpfsWithFilename = async (files) => {
   <IonRow>
     <IonCol>
             <IonButton shape="round" fill="outline" onClick={()=>liststat(directory)} size="small" > Usage </IonButton>
-            <IonButton shape="round" fill="outline" onClick={()=>liststat(remotedirectory)} size="small" > Remote usage </IonButton>
+            <IonButton shape="round" fill="outline" onClick={()=>listremotestat(remotedirectory)} size="small" > Remote usage </IonButton>
     </IonCol>
     <IonCol>
           <IonLabel color="primary"   > {statvalue}  bytes   </IonLabel>
@@ -1136,11 +1224,11 @@ const saveToIpfsWithFilename = async (files) => {
     <IonCol>
     </IonCol>
     <IonCol>
-     { a['fullpath'] ? ( <IonButton size="small" shape="round" fill="outline"  onClick={()=>listNewDirectory(a['fullpath'])} >
+     { (remoteactive === false) ? ( <IonButton size="small" shape="round" fill="outline"  onClick={()=>listNewDirectory(a['fullpath'])} >
        Directory
     </IonButton>
      ) : (
-     <IonButton size="small" shape="round" fill="outline"  onClick={()=>listNewRemoteDirectory(a)} >
+     <IonButton size="small" shape="round" fill="outline"  onClick={()=>listNewRemoteDirectory(a['fullpath'])} >
        RemDirectory
     </IonButton>
        )

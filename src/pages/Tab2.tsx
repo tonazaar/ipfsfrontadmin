@@ -7,7 +7,7 @@ import { IonBadge, IonCardHeader, IonCard, useIonViewWillEnter, useIonViewDidEnt
 import { trash } from 'ionicons/icons';
 import ipfsClient from 'ipfs-http-client';
 
-import { CID } from 'ipfs-http-client';
+//import { CID } from 'ipfs-http-client';
 
 import './Tab2.css';
 import configdata from './config.json';
@@ -24,6 +24,7 @@ const Tab2: React.FC = () =>  {
   const [filename, setFilename] = useState('');
   const [usagelimit, setUsagelimit] = useState(0);
   const [directory, setDirectory] = useState('/user1/contents/');
+  const [remotedirectory, setRemoteDirectory] = useState('/user1/contents/');
   const [workingnode, setWorkingnode] = useState('');
 
   const [mylistnodes, setMylistnodes] = React.useState([]);
@@ -38,6 +39,7 @@ const Tab2: React.FC = () =>  {
   const [loginmessage, setLoginmessage] = useState('');
 
   const [mysegments, setMysegments] = React.useState([]);
+  const [myremotesegments, setMyremotesegments] = React.useState([]);
 
 
   //const mylist1: any[] = [];
@@ -137,6 +139,12 @@ const serverurl = configdata.sailsurl;
 */
         //showMessageAlert(true);
 
+  getremotenodedata(node) ;
+        setWorkingnode(node.nodeid);
+         //localStorage.setItem("remotenodeselected", JSON.stringify(res) );
+        setMessage("Selected "+ workingnode);
+        setShowMessageAlert(true);
+        listNewRemoteDirectory('/'+ node.userid);
   };
 
    const getremotenodedata = async (x) => {
@@ -149,12 +157,12 @@ const serverurl = configdata.sailsurl;
     }
 
 
-  var url = serverurl + "/api/ipfsnode/getnodedata";
+  var url = serverurl + "/api/nodeoperation/getnodedata";
    var cred = {
         userid: ipfsconfig.userid,
-         nodeid:ipfsconfig.nodeid,
-        nodename:ipfsconfig.nodename,
-        nodegroup:ipfsconfig.nodegroup,
+         nodeid:x.nodeid,
+        nodename:x.nodename,
+        nodegroup:x.nodegroup,
 
    };
   fetch(url, {
@@ -272,6 +280,39 @@ const serverurl = configdata.sailsurl;
 
   };
 
+  const prepareDisplayRemoteDirectory = async (dir) => {
+
+    var tmplocalsegment= dir.split('/');
+    var cleanedlocalsegment = [] as any;
+   
+    for(var j =0; j< tmplocalsegment.length; j++) {
+       if(tmplocalsegment[j] !== '')
+       cleanedlocalsegment.push(tmplocalsegment[j]);
+    }
+ 
+    var segmentstouse = [] as any;
+    console.log(JSON.stringify(cleanedlocalsegment));
+
+    var newarray = cleanedlocalsegment.map((x)=> x);
+    for(var i = 0; i< newarray.length; i++) {
+ 
+       var lastdir =  newarray[newarray.length-i-1];
+       var obj = {
+         lastpath: lastdir,
+         fullpath: '/'+cleanedlocalsegment.join('/') 
+       };
+
+      segmentstouse.push(obj); 
+      cleanedlocalsegment.pop();
+    }
+    
+    console.log(JSON.stringify(segmentstouse));
+    segmentstouse.reverse(); 
+    setMyremotesegments(segmentstouse);
+    console.log(JSON.stringify(segmentstouse));
+ 
+  };
+
   const prepareDisplayDirectory = async (dir) => {
 
     var tmplocalsegment= dir.split('/');
@@ -319,6 +360,27 @@ const serverurl = configdata.sailsurl;
     prepareDisplayDirectory(newdir);
     listFiles(newdir);
   };
+
+  const listNewRemoteDirectory = async (newdir) => {
+    preSaveRemoteDirectory(newdir); 
+    prepareDisplayRemoteDirectory(newdir);
+    listFiles(newdir);
+  };
+
+   const preSaveRemoteDirectory = async (dir) => {
+
+    var tmplocalsegment= dir.split('/');
+    var cleanedlocalsegment = [] as any;
+
+    for(var j =0; j< tmplocalsegment.length; j++) {
+       if(tmplocalsegment[j] !== '')
+       cleanedlocalsegment.push(tmplocalsegment[j]);
+    }
+
+    var newdir = '/'+cleanedlocalsegment.join('/');
+    setRemoteDirectory(newdir);
+  };
+
 
   const preSaveDirectory = async (dir) => {
 
@@ -932,6 +994,7 @@ const saveToIpfsWithFilename = async (files) => {
    </IonCard >
             <IonItem >
       <IonGrid>
+
   <IonRow>
     <IonCol>
     Current directory
@@ -946,6 +1009,26 @@ const saveToIpfsWithFilename = async (files) => {
            mysegments.map((a, index) =>      {
          return (
             <IonText key={'somggsgserandohmxxx'+index}   onClick={()=>listNewDirectory(a['fullpath'])} >/{a['lastpath']}</IonText>
+           )
+           })
+          }
+    </IonCol>
+  </IonRow>
+
+  <IonRow>
+    <IonCol>
+    Remote current directory
+    </IonCol>
+    <IonCol>
+
+
+
+
+
+           {
+           myremotesegments.map((a, index) =>      {
+         return (
+            <IonText key={'somggsgserandohmxxx'+index}   onClick={()=>listNewRemoteDirectory(a['fullpath'])} >/{a['lastpath']}</IonText>
            )
            })
           }
@@ -1023,6 +1106,7 @@ const saveToIpfsWithFilename = async (files) => {
   <IonRow>
     <IonCol>
             <IonButton shape="round" fill="outline" onClick={()=>liststat(directory)} size="small" > Usage </IonButton>
+            <IonButton shape="round" fill="outline" onClick={()=>liststat(remotedirectory)} size="small" > Remote usage </IonButton>
     </IonCol>
     <IonCol>
           <IonLabel color="primary"   > {statvalue}  bytes   </IonLabel>
@@ -1056,7 +1140,7 @@ const saveToIpfsWithFilename = async (files) => {
        Directory
     </IonButton>
      ) : (
-     <IonButton size="small" shape="round" fill="outline"  onClick={()=>listNewDagDirectory(a)} >
+     <IonButton size="small" shape="round" fill="outline"  onClick={()=>listNewRemoteDirectory(a)} >
        RemDirectory
     </IonButton>
        )

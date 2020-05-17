@@ -1184,7 +1184,7 @@ const saveToIpfsWithFilename = async (files) => {
             <IonButton shape="round" fill="outline" onClick={()=>listlocalFiles(directory)} size="small" > List files </IonButton>
     </IonCol>
     <IonCol>
-            <IonButton shape="round" fill="outline" onClick={()=>pinFiles(directory)} size="small" > Pin directory </IonButton>
+            <IonButton shape="round"  disabled={ (remoteactive === true) }  fill="outline" onClick={()=>pinFiles(directory)} size="small" > Pin directory </IonButton>
     </IonCol>
   </IonRow>
       </IonGrid>
